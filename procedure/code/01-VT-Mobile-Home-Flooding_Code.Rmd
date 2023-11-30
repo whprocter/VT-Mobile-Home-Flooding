@@ -330,13 +330,21 @@ FEMA_100yr <- FEMA_100yr %>%
                            TRUE ~ FALSE))
 
 tmap_mode("plot")
-tm_shape(FEMA_100yr) +
+tm_shape(river_corridors_multipart) +
   tm_fill(col="blue", palette=hcl.colors(4, "greens"), alpha=0.7, title="")
 ```
 
 ## Group by flooded (all of the flood zones) and dissolve the geometry to get a single part flood zone layer
 ```{r}
-FEMA_100yr_multipart <- FEMA_100yr %>%
+FEMA_multipart <- FEMA_100yr %>%
+  group_by(flood) %>%
+  summarize(geometry = st_union(geometry))
+```
+
+## And do the same for river corridors
+```{r}
+river_corridors_multipart <- river_corridors %>%
+  mutate(flood = TRUE) %>%
   group_by(flood) %>%
   summarize(geometry = st_union(geometry))
 ```
@@ -353,8 +361,36 @@ e911_mh <- e911 %>%
 ```
 
 
+## Add county variables to the mobile homes
 ```{r}
 mh_with_county <- st_join(e911_mh, block_groups, join = st_intersects)
+```
+
+## Add buffer to mobile home points
+```{r}
+mh_buffer <- st_buffer(mh_with_county, dist = 18.3) #18.3 meters is the average length of a mobile home
+```
+
+## Identify the mobile homes within FEMA flood zone
+```{r}
+MHs_in_flood_zone <- st_join(mh_buffer, FEMA_multipart, join = st_intersects)
+
+MHs_in_flood_zone <- MHs_in_flood_zone %>%
+  dplyr::filter(flood == TRUE)
+```
+
+
+
+
+
+
+## Now do the same thing but for river corridors
+## Identify the mobile homes within river corridors
+```{r}
+MHs_in_river_corridors <- st_join(mh_buffer, river_corridors_multipart, join = st_intersects)
+
+MHs_in_river_corridors <- MHs_in_river_corridors %>%
+  dplyr::filter(flood == TRUE)
 ```
 
 
