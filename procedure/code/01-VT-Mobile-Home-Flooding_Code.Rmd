@@ -310,6 +310,16 @@ block_groups <- read_sf(here(public_r, "block_groups.shp"))
 ```
 
 
+# Number of mobile homes by county
+```{r}
+MHs_by_county <- block_groups %>%
+  group_by(county) %>%
+  dplyr::select(county, mobileHU) %>%
+  summarise(number_of_MHs = sum(mobileHU))
+```
+
+
+
 
 
 ```{r}
@@ -362,7 +372,7 @@ e911_mh <- e911 %>%
 mh_with_county <- st_join(e911_mh, block_groups, join = st_intersects)
 
 
-# Group MHs by county and sum them for each county to get column 1
+# Group MHs by county and sum them for each county to get column 1...****WHEN I DID THIS THE COLUMN 1 WAS INCORRECT, INVESTIGATE THIS DEVIATION!!!
 MHs_by_county <- mh_with_county %>%
   group_by(county) %>%
   summarise(count_of_mobile_homes = n())
