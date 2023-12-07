@@ -97,7 +97,7 @@ Enumerate specific **hypotheses** to be tested or **research questions** to be i
 # and double colons such as here::i_am()
 packages <- c("downloader", "rdhs", "haven", "readr", "tidyverse", "pastecs",
              "stars", "sf", "sp", "classInt", 
-             "tmap", "units", "knitr", "tibble", "here", "dplyr")
+             "tmap", "units", "knitr", "tibble", "here", "dplyr", "rgdal")
 
 # force all conflicts to become errors
 # if you load dplyr and use filter(), R has to guess whether you mean dplyr::filter() or stats::filter()
@@ -146,9 +146,8 @@ knitr::opts_chunk$set(
 ```
 
 
+## Set up file path shortcuts
 ```{r}
-
-
 # these values allow you to access private and public raw data more efficiently
 private_r <- here("data", "raw", "private")
 public_r <- here("data", "raw", "public")
@@ -160,12 +159,26 @@ scratch <- here("data", "scratch")
 
 ## Data and variables
 
-Describe the **data sources** and **variables** to be used.
-Data sources may include plans for observing and recording **primary data** or descriptions of **secondary data**.
-For secondary data sources with numerous variables, the analysis plan authors may focus on documenting only the variables intended for use in the study.
+There are four layers for this analysis, each coming from a different primary source.  Primary data sources for the study are to include ...
 
-Primary data sources for the study are to include ... .
-Secondary data sources for the study are to include ... .
+1. e911pts.shp - point - epsg: 32145
+e911 point location data for all residences and buildings in Vermont, for use with emergency response.  The data file can be found on the Vermont Open GeoData Portal <http://geodata.vermont.gov/>
+- SITETYPE: type of building structure/use case of the structure.  "MOBILEHOME" is the SITETYPE that indicates a site is a mobile home/
+
+2. FEMA_100yr.shp - polygon - epsg: 32145
+FEMA Flood Zone polygons with codes.  Codes starting with "A" indicate a 100-year flood risk zone. The data file can be found on the Vermont Open GeoData Portal <http://geodata.vermont.gov/>
+- FLD_Zone: contains FEMA Flood Zone Codes.  If a polygon has a code begins with an "A", then that polygon indicates a 100-year flood zone.
+
+3. river_corridors.shp - polygon - epsg: 32145
+Vermont river corridor polygons, as defined by Flood Ready Vermont.  This flood hazard approach includes streams (with a 50 foot buffer) and rivers with watersheds more than 2km.  The data file can be found on the Vermont Open GeoData Portal <http://geodata.vermont.gov/>
+- 
+
+4. block_groups.shp - polygon - epsg: 32145
+Census block group polygons in southern Vermont, with data on housing.  The data file was acquired from the US Census ACS Survey 2014-2018
+- mobileHU: estimated total number of mobile home housing units within the block group
+- totalHU: estimated total number of all housing units within the block group
+- county: name of county in which the block_group is located
+
 
 Each of the next subsections describes one data source.
 
@@ -206,37 +219,8 @@ Each of the next subsections describes one data source.
 
 ... same form as above...
 
-### Secondary data source1 name
 
-- `Title`: Title of data source
-- `Abstract`: Brief description of the data source
-- `Spatial Coverage`: Specify the geographic extent of your study. This may be a place name and link to a feature in a gazetteer like GeoNames or OpenStreetMap, or a well known text (WKT) representation of a bounding box.
-- `Spatial Resolution`: Specify the spatial resolution as a scale factor, description of the level of detail of each unit of observation (including administrative level of administrative areas), and/or or distance of a raster GRID size
-- `Spatial Reference System`: Specify the geographic or projected coordinate system for the study
-- `Temporal Coverage`: Specify the temporal extent of your study---i.e. the range of time represented by the data observations.
-- `Temporal Resolution`: Specify the temporal resolution of your study---i.e. the duration of time for which each observation represents or the revisit period for repeated observations
-- `Lineage`: Describe and/or cite data sources and/or methodological steps used to create this data source
-- `Distribution`: Describe how the data is distributed, including any persistent identifier (e.g. DOI) or URL for data access
-- `Constraints`: Legal constraints for *access* or *use* to protect *privacy* or *intellectual property rights*
-- `Data Quality`: State result of quality assessment or state "Quality unknown"
-- `Variables`: For each variable, enter the following information. If you have two or more variables per data source, you may want to present this information in table form (shown below)
-  - `Label`: variable name as used in the data or code
-  - `Alias`: intuitive natural language name
-  - `Definition`: Short description or definition of the variable. Include measurement units in description.
-  - `Type`: data type, e.g. character string, integer, real
-  - `Accuracy`: e.g. uncertainty of measurements
-  - `Domain`: Range (Maximum and Minimum) of numerical data, or codes or categories of nominal data, or reference to a standard codebook
-  - `Missing Data Value(s)`: Values used to represent missing data and frequency of missing data observations
-  - `Missing Data Frequency`: Frequency of missing data observations
 
-| Label | Alias | Definition | Type | Accuracy | Domain | Missing Data Value(s) | Missing Data Frequency |
-| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| variable1 | ... | ... | ... | ... | ... | ... | ... |
-| variable2 | ... | ... | ... | ... | ... | ... | ... |
-
-### Secondary data source2 name
-
-... same form as above...
 
 ## Prior observations  
 
@@ -281,6 +265,8 @@ These include:
   - confusion of spatial and a-spatial causation
   - ecological fallacy
   - uncertainty e.g. from spatial disaggregation, anonymization, differential privacy
+  
+MAUP
 
 ## Data transformations
 
@@ -310,23 +296,43 @@ block_groups <- read_sf(here(public_r, "block_groups.shp"))
 ```
 
 
-# Number of mobile homes by county
+# EDA
+
+## Visualize the FEMA flood zones and river corridors
 ```{r}
-MHs_by_county <- block_groups %>%
-  group_by(county) %>%
-  dplyr::select(county, mobileHU) %>%
-  summarise(number_of_MHs = sum(mobileHU))
+# FEMA flood zones
+tmap_mode("plot")
+tm_shape(block_groups) +
+  tm_fill(col="tan", alpha=0.7, title="") +
+tm_shape(FEMA_100yr) +
+  tm_fill(col="blue", alpha=0.7, legend.show = TRUE, title="FEMA Flood Zones") +
+  tm_add_legend(title = "Flood Zones") +
+tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
+
+
+
+
+
+# River corridors
+tmap_mode("plot")
+tm_shape(block_groups) +
+  tm_fill(col="tan", alpha=0.7, title="") +
+tm_shape(river_corridors) +
+  tm_fill(col="darkblue", alpha=0.7, legend.show = TRUE, title="FEMA Flood Zones") +
+  tm_add_legend(title = "River Corridors") +
+tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
+
 ```
 
 
 
+# Clean up the flood zone and river corridor layers into more usable formats
 
-
+## Clean up the FEMA data to identify all the zones that start with "A" (aka in the 100 year flood zone)
 ```{r}
 #Clean up the FEMA data
-
 #Combine the flood zone types
-table(FEMA_100yr$FLD_ZONE)
+
 
 FEMA_100yr <- FEMA_100yr %>%
   mutate(flood = case_when(FLD_ZONE == "A" ~ TRUE,
@@ -334,21 +340,19 @@ FEMA_100yr <- FEMA_100yr %>%
                            FLD_ZONE == "AO" ~ TRUE,
                            TRUE ~ FALSE))
 
-
-
-tmap_mode("plot")
-tm_shape(FEMA_100yr) +
-  tm_fill(col="blue", palette=hcl.colors(4, "greens"), alpha=0.7, title="")
+table(FEMA_100yr$FLD_ZONE)
+FEMA_100yr
 ```
 
-## Group by flooded (all of the flood zones) and dissolve the geometry to get a single part flood zone layer
+
+## Group by flooded (all of the flood zones) and dissolve the geometry to get a multipartpart flood zone
 ```{r}
 FEMA_multipart <- FEMA_100yr %>%
   group_by(flood) %>%
   summarize(geometry = st_union(geometry))
 ```
 
-## And do the same for river corridors
+## And do the same thing for river corridors...create a multipart river corridor 
 ```{r}
 river_corridors_multipart <- river_corridors %>%
   mutate(flood = TRUE) %>%
@@ -358,17 +362,33 @@ river_corridors_multipart <- river_corridors %>%
 
 
 
+# Calculating table columns
+
+## Column 1: calculate the total number of mobile homes by county from the ACS data
+```{r}
+MHs_by_county <- block_groups %>%
+  group_by(county) %>%
+  dplyr::select(county, mobileHU) %>%
+  summarise(number_of_MHs = sum(mobileHU)) %>%
+  st_drop_geometry()
+
+MHs_by_county
+```
 
 
-## Extract just Mobile Homes from the e911 data
+
+## Columns 3 and 4: mobile homes at risk
+
+### Isolate only the points that are mobile homes from the e911 data
 ```{r}
 e911_mh <- e911 %>%
   dplyr::filter(sitetype == "MOBILE HOME")
 ```
 
 
-## Add county variables to the mobile homes
+### Add county variables (from the census data) to the mobile homes points
 ```{r}
+# Join attributes by location
 mh_with_county <- st_join(e911_mh, block_groups, join = st_intersects)
 
 
@@ -380,51 +400,67 @@ MHs_by_county <- mh_with_county %>%
 
 ```
 
-## Add buffer to mobile home points
+
+### Add buffer to mobile home points to account for their structure sizes
 ```{r}
 mh_buffer <- st_buffer(mh_with_county, dist = 18.3) #18.3 meters is the average length of a mobile home
+
+# This does NOT dissolve the resulting geometries 
 ```
 
-## Identify the mobile homes within FEMA flood zone
-```{r}
-MHs_in_flood_zone <- st_join(mh_buffer, FEMA_multipart, join = st_intersects)
 
-MHs_in_flood_zone <- MHs_in_flood_zone %>%
+### Identify the mobile homes within FEMA flood zone, and group by county to get total number of MHs in the flood zone by county
+```{r}
+# Spatial join to the overall flood zone layer...not every MH will be within the flood zone
+mh_fema <- st_join(mh_buffer, FEMA_multipart, join = st_intersects)
+
+# Filter to just the MHs that ended up in the flood zone
+mh_fema <- mh_fema %>%
   dplyr::filter(flood == TRUE)
-```
 
-```{r}
-MHs_in_flood_zone_by_county <- MHs_in_flood_zone %>%
+# Group by county, counting the number of MHs at risk
+mh_fema_by_county <- mh_fema %>%
   group_by(county) %>%
   count(county, name = "mobile_home_count") %>%
-  summarise(mobile_home_count = n())
+  st_drop_geometry()
+
+mh_fema_by_county
 ```
-
-
-
-
 
 
 ## Now do the same thing but for river corridors
-## Identify the mobile homes within river corridors
+## Identify the mobile homes within river corridors, and group by county to get total number of MHs in the river corridors by county
 ```{r}
-MHs_in_river_corridors <- st_join(mh_buffer, river_corridors_multipart, join = st_intersects)
+# Spatial join to the overall river corridor layer...not every MH will be within the river corridors
+mh_rc <- st_join(mh_buffer, river_corridors_multipart, join = st_intersects)
 
-MHs_in_river_corridors <- MHs_in_river_corridors %>%
+# Filter to just the MHs that ended up in the flood zone
+mh_rc <- mh_rc %>%
   dplyr::filter(flood == TRUE)
 
-```
-
-```{r}
-MHs_in_river_corridor_by_county <- MHs_in_river_corridor %>%
+# Group by county, counting the number of MHs at risk
+mh_rc_by_county <- mh_rc %>%
   group_by(county) %>%
   count(county, name = "mobile_home_count") %>%
-  summarise(mobile_home_count = n())
+  st_drop_geometry()
+
+mh_rc_by_county
 
 ```
 
 
 
+## Join all columns to get final table
+```{r}
+final_table <- MHs_by_county %>%
+  mutate(MHs_at_risk_FEMA = mh_fema_by_county$mobile_home_count) %>%
+  mutate(MHs_at_risk_River_Corridors = mh_rc_by_county$mobile_home_count) %>%
+  mutate(FEMA_rate = MHs_at_risk_FEMA / number_of_MHs) %>%
+  mutate(RC_rate = MHs_at_risk_River_Corridors / number_of_MHs)
+final_table
+```
+
+df_merge <- merge(df1,df2,by="col1") 
 
 
 ## Analysis
