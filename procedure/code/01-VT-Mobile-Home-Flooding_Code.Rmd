@@ -97,7 +97,7 @@ Enumerate specific **hypotheses** to be tested or **research questions** to be i
 # and double colons such as here::i_am()
 packages <- c("downloader", "rdhs", "haven", "readr", "tidyverse", "pastecs",
              "stars", "sf", "sp", "classInt", 
-             "tmap", "units", "knitr", "rgdal", "tibble", "here", "dplyr")
+             "tmap", "units", "knitr", "tibble", "here", "dplyr")
 
 # force all conflicts to become errors
 # if you load dplyr and use filter(), R has to guess whether you mean dplyr::filter() or stats::filter()
@@ -298,20 +298,15 @@ Examples of **variable** transformations include standardization, normalization,
 Be sure to include any steps planned to **exclude** observations with *missing* or *outlier* data, to **group** observations by *attribute* or *geographic* criteria, or to **impute** missing data or apply spatial or temporal **interpolation**.
 
 
+# Read in the layers
 ```{r}
 e911 <- read_sf(here(public_r, "e911pts.shp"))
 
-
 FEMA_100yr <- read_sf(here(public_r, "FEMA_100yr.shp"))
-  
   
 river_corridors <- read_sf(here(public_r, "river_corridors.shp"))
 
 block_groups <- read_sf(here(public_r, "block_groups.shp"))
-
-
-
-
 ```
 
 
@@ -329,8 +324,10 @@ FEMA_100yr <- FEMA_100yr %>%
                            FLD_ZONE == "AO" ~ TRUE,
                            TRUE ~ FALSE))
 
+
+
 tmap_mode("plot")
-tm_shape(river_corridors_multipart) +
+tm_shape(FEMA_100yr) +
   tm_fill(col="blue", palette=hcl.colors(4, "greens"), alpha=0.7, title="")
 ```
 
@@ -353,7 +350,6 @@ river_corridors_multipart <- river_corridors %>%
 
 
 
-
 ## Extract just Mobile Homes from the e911 data
 ```{r}
 e911_mh <- e911 %>%
@@ -364,6 +360,14 @@ e911_mh <- e911 %>%
 ## Add county variables to the mobile homes
 ```{r}
 mh_with_county <- st_join(e911_mh, block_groups, join = st_intersects)
+
+
+# Group MHs by county and sum them for each county to get column 1
+MHs_by_county <- mh_with_county %>%
+  group_by(county) %>%
+  summarise(count_of_mobile_homes = n())
+
+
 ```
 
 ## Add buffer to mobile home points
@@ -379,6 +383,13 @@ MHs_in_flood_zone <- MHs_in_flood_zone %>%
   dplyr::filter(flood == TRUE)
 ```
 
+```{r}
+MHs_in_flood_zone_by_county <- MHs_in_flood_zone %>%
+  group_by(county) %>%
+  count(county, name = "mobile_home_count") %>%
+  summarise(mobile_home_count = n())
+```
+
 
 
 
@@ -391,7 +402,17 @@ MHs_in_river_corridors <- st_join(mh_buffer, river_corridors_multipart, join = s
 
 MHs_in_river_corridors <- MHs_in_river_corridors %>%
   dplyr::filter(flood == TRUE)
+
 ```
+
+```{r}
+MHs_in_river_corridor_by_county <- MHs_in_river_corridor %>%
+  group_by(county) %>%
+  count(county, name = "mobile_home_count") %>%
+  summarise(mobile_home_count = n())
+
+```
+
 
 
 
