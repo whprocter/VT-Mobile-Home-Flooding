@@ -293,6 +293,8 @@ FEMA_100yr <- read_sf(here(public_r, "FEMA_100yr.shp"))
 river_corridors <- read_sf(here(public_r, "river_corridors.shp"))
 
 block_groups <- read_sf(here(public_r, "block_groups.shp"))
+
+towns <- read_sf(here(public_r, "towns.shp"))
 ```
 
 
@@ -372,7 +374,8 @@ MHs_by_county <- block_groups %>%
   summarise(number_of_MHs = sum(mobileHU)) %>%
   st_drop_geometry()
 
-MHs_by_county
+MHs_by_county 
+MHs_by_town
 ```
 
 
@@ -391,13 +394,14 @@ e911_mh <- e911 %>%
 # Join attributes by location
 mh_with_county <- st_join(e911_mh, block_groups, join = st_intersects)
 
+# Also do this for towns
+mh_with_county <- st_join(mh_with_county, towns, join = st_intersects)
+
 
 # Group MHs by county and sum them for each county to get column 1...****WHEN I DID THIS THE COLUMN 1 WAS INCORRECT, INVESTIGATE THIS DEVIATION!!!
 MHs_by_county <- mh_with_county %>%
   group_by(county) %>%
   summarise(count_of_mobile_homes = n())
-
-
 ```
 
 
@@ -460,7 +464,67 @@ final_table <- MHs_by_county %>%
 final_table
 ```
 
-df_merge <- merge(df1,df2,by="col1") 
+
+
+# Visualize MH flood risk by town
+```{r}
+
+# Group by town, counting the number of MHs at risk
+mh_fema_by_town <- mh_fema %>%
+  mutate(rc_flood = mh_rc$flood)
+
+
+
+
+
+### Find number of mobile homes by town
+mh_towns <- st_join(towns, e911_mh, join = st_intersects)
+
+mh_towns_grouped <- mh_towns %>%
+  group_by(townName) %>%
+  count(townName, name = "mobile_home_count") %>%
+  rename(town = townName)
+
+
+
+### Either FEMA or River Corridor
+mh_fema_nogm <- mh_fema %>%
+  st_drop_geometry()
+
+mh_rc_nogm <- mh_rc %>%
+  st_drop_geometry()
+
+mh_flooded <- full_join(mh_fema_nogm, mh_rc_nogm, by = "OBJECTID")
+
+mh_flooded <- mh_flooded %>%
+  mutate(town = ifelse(!is.na(townName.x), townName.x, townName.y)) %>%
+  select(-townName.x, -townName.y)
+
+mh_flooded_by_town <- mh_flooded %>%
+  group_by(town) %>%
+  count(town, name = "at_risk_count")
+
+
+# Join at risk to total homes
+town_data <- full_join(mh_towns_grouped, mh_flooded_by_town, by = "town")
+
+# Calculate an at-risk rate
+town_data <- town_data %>%
+  mutate(pct_mh_at_risk = at_risk_count / mobile_home_count)
+
+
+
+tmap_options(width = 10, height = 8)
+# Visualize!
+tmap_mode("plot")
+tm_shape(town_data) +
+  tm_fill(col="pct_mh_at_risk", palette=rev(hcl.colors(4, "Purple-Blue")), style = "jenks", alpha=0.7, title="") +
+  tm_text("town", size = 0.3) +
+  tm_borders(lwd = 0.5, col = "black") +
+tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.size = .1, asp=1.5, title = "% of Mobile Homes at Risk By Town")
+
+
+```
 
 
 ## Analysis
