@@ -537,9 +537,10 @@ tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.si
 non_overlapping <- st_difference(FEMA_multipart, river_corridors_multipart)
 
 tmap_mode("view")
+tm_basemap("Esri.WorldImagery") +
 tm_shape(non_overlapping) +
-  tm_fill(col="blue", palette=rev(hcl.colors(4, "Purple-Blue")), style = "jenks", alpha=0.7, title="") +
-tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.size = .1, asp=1.5, title = "% of Mobile Homes at Risk By Town")
+  tm_fill(pattern = "stripe", col="red", palette=rev(hcl.colors(4, "Purple-Blue")), style = "jenks", alpha=0.7, title="") +
+tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.size = .1, asp=1.5, title = "Discontinuities Between Flood Hazard Identification Methods")
 
 ```
 
