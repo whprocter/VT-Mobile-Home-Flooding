@@ -375,7 +375,7 @@ MHs_by_county <- block_groups %>%
   st_drop_geometry()
 
 MHs_by_county 
-MHs_by_town
+
 ```
 
 
@@ -459,8 +459,8 @@ mh_rc_by_county
 final_table <- MHs_by_county %>%
   mutate(MHs_at_risk_FEMA = mh_fema_by_county$mobile_home_count) %>%
   mutate(MHs_at_risk_River_Corridors = mh_rc_by_county$mobile_home_count) %>%
-  mutate(FEMA_rate = MHs_at_risk_FEMA / number_of_MHs) %>%
-  mutate(RC_rate = MHs_at_risk_River_Corridors / number_of_MHs)
+  mutate(FEMA_rate = MHs_at_risk_FEMA / count_of_mobile_homes) %>%
+  mutate(RC_rate = MHs_at_risk_River_Corridors / count_of_mobile_homes)
 final_table
 ```
 
@@ -470,8 +470,8 @@ final_table
 ```{r}
 
 # Group by town, counting the number of MHs at risk
-mh_fema_by_town <- mh_fema %>%
-  mutate(rc_flood = mh_rc$flood)
+#mh_fema_by_town <- mh_fema %>%
+#  mutate(rc_flood = mh_rc$flood)
 
 
 
@@ -508,13 +508,17 @@ mh_flooded_by_town <- mh_flooded %>%
 # Join at risk to total homes
 town_data <- full_join(mh_towns_grouped, mh_flooded_by_town, by = "town")
 
+# Change N/As to zero
+town_data <- town_data %>%
+  mutate(at_risk_count = ifelse(is.na(at_risk_count), 0, at_risk_count))
+
 # Calculate an at-risk rate
 town_data <- town_data %>%
   mutate(pct_mh_at_risk = at_risk_count / mobile_home_count)
 
 
 
-tmap_options(width = 10, height = 8)
+
 # Visualize!
 tmap_mode("plot")
 tm_shape(town_data) +
@@ -526,6 +530,22 @@ tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.si
 
 ```
 
+
+
+```{r}
+### Discrepancy between FEMA and RC
+non_overlapping <- st_difference(FEMA_multipart, river_corridors_multipart)
+
+tmap_mode("view")
+tm_shape(non_overlapping) +
+  tm_fill(col="blue", palette=rev(hcl.colors(4, "Purple-Blue")), style = "jenks", alpha=0.7, title="") +
+tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.size = .1, asp=1.5, title = "% of Mobile Homes at Risk By Town")
+
+```
+
+Construct validity
+Small number problem if a town doesn't have a ton of mobile homes
+Lineage section to specify the data sources
 
 ## Analysis
 
