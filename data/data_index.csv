@@ -1,4 +1,5 @@
 | path | name | metadata | description |
+| ... | ... | ... | ... |
 | data/derived/public | FEMA_100yr.shp | metadata | description |
 | data/derived/public | block_groups.shp | metadata | description |
 | data/derived/public | dissolved_buffered_ct_river_corridor.shp | metadata | description |
