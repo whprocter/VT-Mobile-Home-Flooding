@@ -1,19 +1,14 @@
-- `Title`: Title of data source
-- `Abstract`: Brief description of the data source
-- `Spatial Coverage`: Specify the geographic extent of your study. This may be a place name and link to a feature in a gazetteer like GeoNames or OpenStreetMap, or a well known text (WKT) representation of a bounding box.
+- `Title`: e911pts.shp
+- `Abstract`: Point location data for all ocations of residences and buildings in Bennington, Rutland, Windham, and Windsor counties for use with emergency response
+- `Spatial Coverage`: Bennington, Rutland, Windham, and Windsor counties
 - `Spatial Resolution`: Specify the spatial resolution as a scale factor, description of the level of detail of each unit of observation (including administrative level of administrative areas), and/or or distance of a raster GRID size
-- `Spatial Reference System`: Specify the geographic or projected coordinate system for the study
-- `Temporal Coverage`: Specify the temporal extent of your study---i.e. the range of time represented by the data observations.
-- `Temporal Resolution`: Specify the temporal resolution of your study---i.e. the duration of time for which each observation represents or the revisit period for repeated observations
-- `Lineage`: Describe and/or cite data sources and/or methodological steps taken or planned to create this data source, e.g.:
-  - sampling scheme, including spatial sampling
-  - target sample size and method for determining sample size
-  - stopping criteria for data collection and sampling (e.g. sample size, time elapsed)
-  - de-identification / anonymization
-  - experimental manipulation
-- `Distribution`: Describe who will make the data available and how?
-- `Constraints`: Legal constraints for *access* or *use* to protect *privacy* or *intellectual property rights*
-- `Data Quality`: State any planned quality assessment
+- `Spatial Reference System`: EPSG 32145 - NAD 83 Vermont
+- `Temporal Coverage`: Some time 2014-2022
+- `Temporal Resolution`: N/A
+- `Lineage`: Downloaded from the VT Open GeoData Portal by GEOG 0261 instructors, and cleaned to only include the 4 southernmost counties, and to select only the `sitetype` variable.
+- `Distribution`: The raw data is publicly available from the VT Open GeoData Portal, although the e911 point data is intended for use with emergency response
+- `Constraints`: N/A
+- `Data Quality`: Assumed to be accurate and representative of all residences and structures in Southern VT
 - `Variables`: For each variable, enter the following information. If you have two or more variables per data source, you may want to present this information in table form (shown below)
   - `Label`: variable name as used in the data or code
   - `Alias`: intuitive natural language name
@@ -26,5 +21,7 @@
 
 | Label | Alias | Definition | Type | Accuracy | Domain | Missing Data Value(s) | Missing Data Frequency |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| variable1 | ... | ... | ... | ... | ... | ... | ... |
-| variable2 | ... | ... | ... | ... | ... | ... | ... |
+| OBJECTID | unique identifier for each unique structure/residence | ... | numeric | ... | ... | n/a | n/a |
+| sitetype | Type of location, of which one category is 'MOBILE HOME' | ... | character | ... | ... | n/a | n/a |
+| geometry | point geometry| ... | unknown | ... | ... | n/a | n/a |
+
