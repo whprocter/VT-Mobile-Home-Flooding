@@ -1,10 +1,7 @@
-| path | name | metadata | description |
-| ... | ... | ... | ... |
-| data/derived/public | FEMA_100yr.shp | metadata | description |
-| data/derived/public | block_groups.shp | metadata | description |
-| data/derived/public | dissolved_buffered_ct_river_corridor.shp | metadata | description |
-| data/derived/public | e911pts.shp | metadata | description |
-| data/derived/public | river_corridors.shp | metadata | description |
-| data/derived/public | towns.shp | metadata | description |
-
-
+path,name,metadata,description
+data/derived/public,FEMA_100yr.shp,metadata,description
+data/derived/public,block_groups.shp,metadata,description
+data/derived/public,dissolved_buffered_ct_river_corridor.shp,metadata,description
+data/derived/public,e911pts.shp,metadata,description
+data/derived/public,river_corridors.shp,metadata,description
+data/derived/public,towns.shp,metadata,description
