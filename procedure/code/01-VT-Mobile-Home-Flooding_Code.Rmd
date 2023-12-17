@@ -155,6 +155,7 @@ private_r <- here("data", "raw", "private")
 public_r <- here("data", "raw", "public")
 public_d <- here("data", "derived", "public")
 results_figures <- here("results", "figures")
+results_tables <- here("results", "tables")
 scratch <- here("data", "scratch")
 ```
 
@@ -299,7 +300,7 @@ block_groups <- read_sf(here(public_d, "block_groups.shp"))
 
 towns <- read_sf(here(public_d, "towns.shp"))
 
-ct_river_corridor <- read_sf(here(public_d, "dissolved_buffered_ct_river_corridor.shp"))
+ct_river_corridor <- read_sf(here(public_d, "CT_corridor_final_dissolved_buffered.shp"))
 ```
 
 
@@ -315,7 +316,7 @@ fz_map <- tm_shape(block_groups) +
   tm_fill(col="blue", alpha=0.7, legend.show = TRUE, title="FEMA Flood Zones") +
   tm_add_legend(title = "Flood Zones") +
   tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
-tmap_save(fz_map, filename = paste0(results_figures, "FEMA_flood_zone_map.pdf")) #export to results/figures
+tmap_save(fz_map, filename = paste0(results_figures, "/FEMA_flood_zone_map.pdf")) #export to results/figures
 
 
 
@@ -328,7 +329,7 @@ rc_map <- tm_shape(block_groups) +
   tm_fill(col="darkblue", alpha=0.7, legend.show = TRUE, title="FEMA Flood Zones") +
   tm_add_legend(title = "River Corridors") +
   tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
-tmap_save(rc_map, filename = paste0(results_figures, "river_corridor_map.pdf")) #export to results/figures
+tmap_save(rc_map, filename = paste0(results_figures, "/river_corridor_map.pdf")) #export to results/figures
 
 fz_map
 rc_map
@@ -370,10 +371,11 @@ river_corridors_multipart <- river_corridors %>%
 
 
 
-# Calculating table columns
+# Calculating table columns to reproduce Table 1
 
-## Column 1: calculate the total number of mobile homes by county from the ACS data
+## Column 1 (step 1): calculate the total number of mobile homes in each county from the ACS data - aggregate from the block groups
 ```{r}
+# Group block groups by county, select just county and mobileHU variables, and for each county, sum the number of mobile homes from all of the block groups that lay within the county
 MHs_by_county <- block_groups %>%
   group_by(county) %>%
   dplyr::select(county, mobileHU) %>%
@@ -381,23 +383,25 @@ MHs_by_county <- block_groups %>%
   st_drop_geometry()
 
 MHs_by_county 
-
 ```
 
 
 
-## Columns 3 and 4: mobile homes at risk
+## Columns 3 and 4 (steps 3 and 4): mobile homes at risk
 
-### Isolate only the points that are mobile homes from the e911 data
+I exclude column 2, which was created using area weighted aggregation of mobile homes.However, the GEOG 0261 instructors discovered that this approach is less accurate than using the e911 point data to identify mobile homes at risk, so I will forego reproducing the AWR approach.
+
+
+### Isolate only the points/residences that are mobile homes from the e911 data
 ```{r}
 e911_mh <- e911 %>%
   dplyr::filter(sitetype == "MOBILE HOME")
 ```
 
 
-### Add county variables (from the census data) to the mobile homes points
+### Add county and town variable (from the census/ACS data) to the mobile homes points, joining by location
 ```{r}
-# Join attributes by location
+# Join attributes by location...identify the mobile home points that are spatially located within each county
 mh_with_county <- st_join(e911_mh, block_groups, join = st_intersects)
 
 # Also do this for towns
@@ -405,15 +409,20 @@ mh_with_county <- st_join(mh_with_county, towns, join = st_intersects)
 
 
 # Group MHs by county and sum them for each county to get column 1...****WHEN I DID THIS THE COLUMN 1 WAS INCORRECT, INVESTIGATE THIS DEVIATION!!!
-MHs_by_county <- mh_with_county %>%
-  group_by(county) %>%
-  summarise(count_of_mobile_homes = n())
+#MHs_by_county <- mh_with_county %>%
+#  group_by(county) %>%
+#  summarise(count_of_mobile_homes = n())
 ```
 
+NOTE: I attempted also to sum the number of e911 mobile home points for each county.  This yielded a different number of mobile homes than Column 1 indicates.  Because the ACS measurement of `mobileHU` is a survey-based estimate, it does not represent the true number of mobile home structures.  This is a source of geographic uncertainty to this analysis, specifically an issue of spatial heterogeneity and construct validity.
 
-### Add buffer to mobile home points to account for their structure sizes
+I will proceed with using Total Number of Mobile Homes column from the ACS data to be consistent with the GEOG 0261 analysis, but this is something that may want to be changed in the future.
+
+
+
+### Add buffer (18.3 meters aka 60 feet) to mobile home points to account for their structure sizes
 ```{r}
-mh_buffer <- st_buffer(mh_with_county, dist = 18.3) #18.3 meters is the average length of a mobile home
+mh_buffer <- st_buffer(mh_with_county, dist = 18.3) #18.3 meters (60 feet) is the average length of a mobile home
 
 # This does NOT dissolve the resulting geometries 
 ```
@@ -422,30 +431,50 @@ mh_buffer <- st_buffer(mh_with_county, dist = 18.3) #18.3 meters is the average 
 ### Identify the mobile homes within FEMA flood zone, and group by county to get total number of MHs in the flood zone by county
 ```{r}
 # Spatial join to the overall flood zone layer...not every MH will be within the flood zone
-mh_fema <- st_join(mh_buffer, FEMA_multipart, join = st_intersects)
+# Identifies which buffered mobile home points intersect flood zones
+mh_fema_everything <- st_join(mh_buffer, FEMA_multipart, join = st_intersects)
 
-# Filter to just the MHs that ended up in the flood zone
-mh_fema <- mh_fema %>%
+# Filter to just the MHs that ended up in the flood zone...MHs in the flood zone meet the condition flood = TRUE
+mh_fema <- mh_fema_everything %>%
   dplyr::filter(flood == TRUE)
 
-# Group by county, counting the number of MHs at risk
+# OR, just use a select by location, but this I found is more computationally intensive
+mh_fema2 <- st_intersection(mh_buffer, FEMA_multipart)
+
+
+
+
+# Group by county, counting the number of MHs at risk...using spatial join then filtered data
 mh_fema_by_county <- mh_fema %>%
   group_by(county) %>%
   count(county, name = "mobile_home_count") %>%
   st_drop_geometry()
 
 mh_fema_by_county
+
+
+# Group by county, counting the number of MHs at risk...using select by location data
+mh_fema_by_county2 <- mh_fema2 %>%
+  group_by(county) %>%
+  count(county, name = "mobile_home_count") %>%
+  st_drop_geometry()
+
+mh_fema_by_county2
+
+# Both approaches seem to work!  But I get a warning for the select by location approach.  Thus, I will use the spatial join + filter data for use going forward.
 ```
 
 
-## Now do the same thing but for river corridors
-## Identify the mobile homes within river corridors, and group by county to get total number of MHs in the river corridors by county
+### Now do the same thing but for river corridors...
+
+### Identify the mobile homes within river corridors, and group by county to get total number of MHs in the river corridors by county
 ```{r}
 # Spatial join to the overall river corridor layer...not every MH will be within the river corridors
-mh_rc <- st_join(mh_buffer, river_corridors_multipart, join = st_intersects)
+# Identifies which buffered mobile home points intersect river corridors
+mh_rc_everything <- st_join(mh_buffer, river_corridors_multipart, join = st_intersects)
 
-# Filter to just the MHs that ended up in the flood zone
-mh_rc <- mh_rc %>%
+# Filter to just the MHs that ended up in the flood zone...MHs in the river corridors meet the condition flood = TRUE
+mh_rc <- mh_rc_everything %>%
   dplyr::filter(flood == TRUE)
 
 # Group by county, counting the number of MHs at risk
@@ -456,65 +485,79 @@ mh_rc_by_county <- mh_rc %>%
 
 mh_rc_by_county
 
+# I use the spatial join + filter for the MHs in the river corridor approach due to the reasons outlined in the previous code chunk
 ```
 
 
 
-## Join all columns to get final table
+## Join all columns together to get the final table!  Table 1:
 ```{r}
-final_table <- MHs_by_county %>%
+final_table_1 <- MHs_by_county %>%
   mutate(MHs_at_risk_FEMA = mh_fema_by_county$mobile_home_count) %>%
   mutate(MHs_at_risk_River_Corridors = mh_rc_by_county$mobile_home_count) %>%
-  mutate(FEMA_rate = MHs_at_risk_FEMA / count_of_mobile_homes) %>%
-  mutate(RC_rate = MHs_at_risk_River_Corridors / count_of_mobile_homes)
+  mutate(FEMA_rate = MHs_at_risk_FEMA / number_of_MHs) %>%
+  mutate(RC_rate = MHs_at_risk_River_Corridors / number_of_MHs)
 final_table
+
+# Export the final table to a CSV
+write.csv(final_table_1, file = file.path(results_tables, 'Table1.csv'), row.names = FALSE)
+
 ```
+
+Unplanned deviation for reproduction: I decided to calculate "rates "risk rates" to indicate what proportion of a county's mobile homes lie within the FEMA flood zones and the River Corridors, respectively.  They are pretty similar for Rutland and Windham counties.  In Bennington County, the FEMA risk rate is higher than the River Corridor risk rate.  In Windsor County, the River Corridor risk rate is higher than the FEMA risk rate.
+
 
 
 
 # Visualize MH flood risk by town
+
+
+## First, I need to find the number of mobile homes by town
+
 ```{r}
+# Identify which mobile home points are in each town, and count up how many are in each town
 
-# Group by town, counting the number of MHs at risk
-#mh_fema_by_town <- mh_fema %>%
-#  mutate(rc_flood = mh_rc$flood)
-
-
-
-
-
-### Find number of mobile homes by town
 mh_towns <- st_join(towns, e911_mh, join = st_intersects)
 
 mh_towns_grouped <- mh_towns %>%
   group_by(townName) %>%
   count(townName, name = "mobile_home_count") %>%
   rename(town = townName)
+```
 
 
 
-### Either FEMA or River Corridor
+## Next, I need to find which mobile homes are in EITHER a FEMA flood zone OR River Corridor
+
+This will cast a wider net than if we look at just flood zones or river corridors individually, as this will maximize the number of mobile homes that are determined to be at risk.  At this stage in the analysis, we care more about seeing which towns have the highest vulnerability of mobile homes to flooding, not whether the VT River Corridor or FEMA Flood Zone approach is more accurate.  Thus, including both flood risk identification metrics is a safer approach to ensure we identify all mobile homes that are at some level of risk to flooding. 
+
+```{r}
+# Drop geometry from MHs identified to be in the FEMA flood zones
 mh_fema_nogm <- mh_fema %>%
   st_drop_geometry()
 
+# Drop geometry from MHs identified to be in the River Corridors
 mh_rc_nogm <- mh_rc %>%
   st_drop_geometry()
 
+# Full join the above two data frames...any mobile home that is in one or both flood hazard identifiers will get its own row in this data frame
 mh_flooded <- full_join(mh_fema_nogm, mh_rc_nogm, by = "OBJECTID")
 
+# Create a new column for town name that is the correct town name for where the mobile home is situated
 mh_flooded <- mh_flooded %>%
   mutate(town = ifelse(!is.na(townName.x), townName.x, townName.y)) %>%
   select(-townName.x, -townName.y)
 
+# Group by town, and count the number of at risk mobile homes in each town
 mh_flooded_by_town <- mh_flooded %>%
   group_by(town) %>%
   count(town, name = "at_risk_count")
 
 
-# Join at risk to total homes
+# Join number of mobile homes at risk to the total number of mobile homes in each town, by town
 town_data <- full_join(mh_towns_grouped, mh_flooded_by_town, by = "town")
 
-# Change N/As to zero
+# Change N/As to zero...it would be N/A if there are no mobile homes at risk in that town
 town_data <- town_data %>%
   mutate(at_risk_count = ifelse(is.na(at_risk_count), 0, at_risk_count))
 
@@ -522,26 +565,43 @@ town_data <- town_data %>%
 town_data <- town_data %>%
   mutate(pct_mh_at_risk = at_risk_count / mobile_home_count)
 
+most_vulnerable_towns <- town_data %>%
+  arrange(-pct_mh_at_risk) %>%
+  head(10)
+
+most_vulnerable_towns
+  
+```
+
+Results slightly differ between this ant the GEOG 0261 results because I directly downloaded the towns.shp file from the VT Open GeoData Portal, while the GEOG 0261 class uses a pre-cleaned provided towns shapefile layer.  I could not use the provided one due to file corruption issues.  However, the provided one for the class distinguishes between Rutland Town and Rutland City, while the layer that I downloaded treated the two as a combined town of "Rutland." Rutland Town has a pct_mh_at_risk value of 57.89, so if my towns file distinguished just the town portion, it would be in the top 10 of highest risk towns for mobile homes at risk.
 
 
-
+## Plot a choropleth map of the % of mobile homes in each town that are at risk to flooding, and export
+```{r}
 # Visualize!
 tmap_mode("plot")
-tm_shape(town_data) +
+pct_mh_at_risk_by_town <- tm_shape(town_data) +
   tm_fill(col="pct_mh_at_risk", palette=rev(hcl.colors(4, "Purple-Blue")), style = "jenks", alpha=0.7, title="") +
   tm_text("town", size = 0.3) +
   tm_borders(lwd = 0.5, col = "black") +
-tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.size = .1, asp=1.5, title = "% of Mobile Homes at Risk By Town")
+  tm_layout(legend.width=3, legend.text.size = .6, title.size = .8, legend.title.size = .1, asp=1.7, title = "% of Mobile Homes at Risk By Town (Either FEMA or River Corridor)")
+
+# Export map 
+tmap_save(pct_mh_at_risk_by_town, filename = paste0(results_figures, "/pct_mh_at_risk_by_town.pdf")) #export to results/figures
 
 
+pct_mh_at_risk_by_town
 ```
 
+# Unplanned deviation for reproduction: identify areas where FEMA 100 year Flood Zones and VT River Corridors do not line up
 
+I was curious about the discrepancy between the two metrics so created a layer that differences the two polygon layers and plots it with a satellite base-map.  Notably, the River Corridors include fewer lakes/ponds and large rivers.  This is significant, because these water bodies can still cause severe flooding if water influx causes them to over spill their banks.  Additionally, note that the Connecticut River is not included at all in the River Corridors.
 
 ```{r}
 ### Discrepancy between FEMA and RC
 non_overlapping <- st_difference(FEMA_multipart, river_corridors_multipart)
 
+# Interactive map so that the reader can investigate where the discrepancies occur!
 tmap_mode("view")
 tm_basemap("Esri.WorldImagery") +
 tm_shape(non_overlapping) +
@@ -549,6 +609,55 @@ tm_shape(non_overlapping) +
 tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.size = .1, asp=1.5, title = "Discontinuities Between Flood Hazard Identification Methods")
 
 ```
+
+
+
+# Planned deviation for reproduction: Identify how many mobile homes would be likely to be in a River Corridor of the Connecticut River, if the creators of the River Corridor shapefile had included the Connecticut River.
+
+This will help improve the geographic uncertainty caused by the boundary effect of the Connecticut River technically being fully part of New Hampshire, not Vermont.
+
+
+```{r}
+# Spatial join the buffered mobile home points to the estimated Connecticut River Corridor layer...not every MH will be within the estimated corridor
+# Identifies which buffered mobile home points intersect the corridor
+mh_ct_river_corridor_everything <- st_join(mh_buffer, ct_river_corridor, join = st_intersects)
+
+# Filter to just the MHs that ended up in the flood zone...MHs in the river corridors meet the condition flood = TRUE
+mh_ct_river_corridor <- mh_ct_river_corridor_everything %>%
+  dplyr::filter(!is.na(WBNAME))
+
+# Group by county, counting the number of MHs at risk
+mh_ct_river_corridor_by_county <- mh_ct_river_corridor %>%
+  group_by(county) %>%
+  count(county, name = "mobile_home_count") %>%
+  st_drop_geometry()
+
+mh_ct_river_corridor_by_county
+```
+
+While this is definitely a bit of an overestimate, it does highlight how the VT River Corridor model's omission of the Connecticut River excludes a significant number of mobile homes.  There are a large number of mobile home parks close to the Connecticut River, which is a contributing factor.  61 mobile homes in Windsor at risk to flooding and 283 mobile homes in Windsor are at risk to flooding, aka they intersect my estimated river corridor for the Connecticut River.
+
+
+To estimate a Connecticut River Corridor polygon layer (ct_river_corridor), I performed the following in QGIS:
+- Load in a line layer for the centerline of the river channel, which I downloaded from the VT Open GeoData Portal
+- I eyeballed the average width of the river channel by taking measurements with the measurement tool at various points along the river, and I made a well-informed assumption that the average channel width is 180 meters wide (this is probably a bit of an overestimate).  I then buffered the centerline by 90 meters to get a polygon that represents the river channel that is consistently 180 meters (buffered 90 meters from the centerline on either side).  
+- I then added an additional 580 meter buffer.  This creates a polygon representing the river corridor that is consistently 1080 meters wide, or 6x the 180 meter average channel width
+
+The documentation for the report on how River Corridors were constructed, on the Flood Ready Vermont website, said that a good rule of thumb is that a river corridor is 6x the width of the stream/river channel that it is based around.  While they do also take slope and geologic traits to provide a more specific river corridor profile, that is beyond the scope of this analysis, and I will make do with the 6x width approach.
+
+## Check out the polygon that I made to estimate the River Corridor for the Connecticut River
+```{r}
+tmap_mode("view")
+tm_basemap("Esri.WorldImagery") +
+tm_shape(ct_river_corridor) +
+  tm_fill(pattern = "stripe", col="lightblue", palette=rev(hcl.colors(4, "Purple-Blue")), style = "jenks", alpha=0.7, title="") +
+tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.size = .1, asp=1.5, title = "Estimated River Corridor for the Connecticut River")
+```
+
+
+
+
+## Sources of Geographic uncertainty
 
 Construct validity
 Small number problem if a town doesn't have a ton of mobile homes
