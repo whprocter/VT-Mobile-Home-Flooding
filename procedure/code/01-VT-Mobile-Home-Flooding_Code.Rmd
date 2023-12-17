@@ -288,15 +288,17 @@ Be sure to include any steps planned to **exclude** observations with *missing* 
 
 # Read in the layers
 ```{r}
-e911 <- read_sf(here(public_r, "e911pts.shp"))
+e911 <- read_sf(here(public_d, "e911pts.shp"))
 
-FEMA_100yr <- read_sf(here(public_r, "FEMA_100yr.shp"))
+FEMA_100yr <- read_sf(here(public_d, "FEMA_100yr.shp"))
   
-river_corridors <- read_sf(here(public_r, "river_corridors.shp"))
+river_corridors <- read_sf(here(public_d, "river_corridors.shp"))
 
-block_groups <- read_sf(here(public_r, "block_groups.shp"))
+block_groups <- read_sf(here(public_d, "block_groups.shp"))
 
-towns <- read_sf(here(public_r, "towns.shp"))
+towns <- read_sf(here(public_d, "towns.shp"))
+
+ct_river_corridor <- read_sf(here(public_d, "dissolved_buffered_ct_river_corridor.shp"))
 ```
 
 
