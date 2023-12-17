@@ -154,6 +154,7 @@ knitr::opts_chunk$set(
 private_r <- here("data", "raw", "private")
 public_r <- here("data", "raw", "public")
 public_d <- here("data", "derived", "public")
+results_figures <- here("results", "figures")
 scratch <- here("data", "scratch")
 ```
 
@@ -302,44 +303,44 @@ ct_river_corridor <- read_sf(here(public_d, "dissolved_buffered_ct_river_corrido
 ```
 
 
-# EDA
+# Exploratory Data Analysis
 
 ## Visualize the FEMA flood zones and river corridors
 ```{r}
 # FEMA flood zones
 tmap_mode("plot")
-tm_shape(block_groups) +
+fz_map <- tm_shape(block_groups) +
   tm_fill(col="tan", alpha=0.7, title="") +
-tm_shape(FEMA_100yr) +
+  tm_shape(FEMA_100yr) +
   tm_fill(col="blue", alpha=0.7, legend.show = TRUE, title="FEMA Flood Zones") +
   tm_add_legend(title = "Flood Zones") +
-tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
+  tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
+tmap_save(fz_map, filename = paste0(results_figures, "FEMA_flood_zone_map.pdf")) #export to results/figures
 
 
 
 
 
 # River corridors
-tmap_mode("plot")
-tm_shape(block_groups) +
+rc_map <- tm_shape(block_groups) +
   tm_fill(col="tan", alpha=0.7, title="") +
-tm_shape(river_corridors) +
+  tm_shape(river_corridors) +
   tm_fill(col="darkblue", alpha=0.7, legend.show = TRUE, title="FEMA Flood Zones") +
   tm_add_legend(title = "River Corridors") +
-tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
+  tm_layout(legend.width=3, legend.text.size = .6, legend.title.size = 1, asp=0.8)
+tmap_save(rc_map, filename = paste0(results_figures, "river_corridor_map.pdf")) #export to results/figures
 
+fz_map
+rc_map
 ```
 
 
 
 # Clean up the flood zone and river corridor layers into more usable formats
 
-## Clean up the FEMA data to identify all the zones that start with "A" (aka in the 100 year flood zone)
+## Clean up the FEMA data to identify all the zones that start with "A" (aka in the 100 year flood zone)...treat them all the same
 ```{r}
-#Clean up the FEMA data
-#Combine the flood zone types
-
-
+# Create a column called "flood" that is TRUE for all flood zones that are 100 year flood zones
 FEMA_100yr <- FEMA_100yr %>%
   mutate(flood = case_when(FLD_ZONE == "A" ~ TRUE,
                            FLD_ZONE == "AE" ~ TRUE,
@@ -351,14 +352,15 @@ FEMA_100yr
 ```
 
 
-## Group by flooded (all of the flood zones) and dissolve the geometry to get a multipartpart flood zone
+## Group by flood (all of the 100 year flood zones) and dissolve the geometry to get a single multipart flood zone
 ```{r}
 FEMA_multipart <- FEMA_100yr %>%
   group_by(flood) %>%
   summarize(geometry = st_union(geometry))
 ```
 
-## And do the same thing for river corridors...create a multipart river corridor 
+
+## And do the same thing for river corridors...create a single multipart river corridor 
 ```{r}
 river_corridors_multipart <- river_corridors %>%
   mutate(flood = TRUE) %>%
