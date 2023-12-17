@@ -1,50 +1,52 @@
-If you use this template for research, please [cite it](template_reference.bib):
-> Kedron, P., & Holler, J. (2023). Template for Reproducible and Replicable Research in Human-Environment and Geographical Sciences. https://doi.org/10.17605/OSF.IO/W29MQ
-
-# Title of Study
+# Introductory Spatial Analysis Using and Open Source Code-based Program
 
 ## Contributors
 
-- First Name Last Name\*, email address, @githubname, ORCID link, affiliated institution(s)
-- First Name Last Name, email address, @githubname, ORCID link, affiliated institution(s)
-
-\* Corresponding author and creator
+- William Procter, wprocter@middlebury.edu, @whprocter, Middlebury College Department of Geography
+- Using materials and lesson plans created by the Middlebury College Department of Geography Faculty
 
 ## Abstract
 
-Write a brief abstract about your research project.
-If the project is a reproduction or replication study, include the full citation with a statement
-This study is a *reproduction/replication* of:
+This study is a reproduction of a course-based assignment used in teaching Middlebury College's GEOG 0261 course - Human Geography of GIS.  The analysis - titled Flood Hazard Vulnerability in Vermont's Mobile Homes - is used to teach undergraduate geography students the fundamentals of spatial analysis, and it is taught and conducted entirely using QGIS's graphical user interface.  The assignment focuses on identifying the locations of mobile homes in southeastern Vermont that sit in known flood hazard areas, as determined by FEMA's 100-year flood zones and Flood Ready Vermont's VT river corridors.  Additionally, the assignment asks students contrast these two different methods for defining flood risk: the federal FEMA flood zones and the Vermont River Corridors (inclusive of rivers and small streams). The analysis is a motivated by Baker et al.'s (2014), who studied the vulnerability of Vermont mobile home parks to flooding following the major flooding that Vermont experienced during Hurricane Irene.  The course assignment and this reproduction study follow GIS methodology outlined by Baker, Hamshaw and Hamshaw (2014) in the Mobile Home Park Flood Hazard Identification section, and Figure 5 of the paper. Their method includes creating a 60-foot buffer around point locations of mobile homes, since a typical mobile home is 120 feetlong. They consider a mobile home to be at risk of flooding if any part of the buffer is in the 100-year FEMA flood zone.  The assignment also tests if any part of the buffer is in the VT River Corridors.
 
-> citation to prior study
+I reproduce the spatial analysis steps of the **Flood Hazard Vulnerability in Vermont's Mobile Homes** using a code-based approach in R to see if it yields same results as when using QGIS.  Additionally, I seek to decrease sources of geographic uncertainty, namely boundary effects along the eastern border of the state (Connecticut River).
 
-A graphical abstract of the study could also be included as an image here.
+I reproduced this study in R in hopes that my R code can be used by GEOG 0261 (or other course) instructors to teach fundamental spatial analysis techniques using a code-based approach.
+
+Vermont is especially vulnerable to flooding because of how its steep terrain funnels water. Water draining into a valley surrounded by mountains piles up faster and higher than water spread over wider, flatter spaces. This not only increases the risk of flooding, but it also heightens the likelihood of landslides.  Ultimately' the steep terrain in many parts of the state intensifies runoff, and makes flooding "flashier."  The study demonstrates that mobile homes in southeastern Vermont are highly to flooding. Thus, the vulnerability findings of this study can also be used by stakeholders to direct and identify resiliency projects to reduce the vulnerability of these homes.
+
+For the sake of simplicity and to save time, this study will use the pre-cleaned datasets that the GEOG 0261 instructors provide to students in the course.  The data is believed to have been downloaded sometime between 2014 and 2022.
+
+A copy of the assignment used in the GEOG 0261 course can be found in the `docs` folder of the repository.
+
+Baker et al. (2014) study:
+Baker, D., Hamshaw, S. D., & Hamshaw, K. A. (2014). Rapid flood exposure assessment of Vermont mobile home parks following Tropical Storm Irene. Natural Hazards Review, 15(1), 27-37. DOI: 10.1061/(ASCE)NH.1527-6996.0000112.
 
 ## Study Metadata
 
-- `Key words`: Comma-separated list of keywords (tags) for searchability. Geographers often use one or two keywords each for: theory, geographic context, and methods.
-- `Subject`: select from the [BePress Taxonomy](http://digitalcommons.bepress.com/cgi/viewcontent.cgi?article=1008&context=reference)
-- `Date created`: date when project was started
-- `Date modified`: date of most recent revision
-- `Spatial Coverage`: Specify the geographic extent of your study. This may be a place name and link to a feature in a gazetteer like GeoNames or OpenStreetMap, or a well known text (WKT) representation of a bounding box.
-- `Spatial Resolution`: Specify the spatial resolution as a scale factor, description of the level of detail of each unit of observation (including administrative level of administrative areas), and/or or distance of a raster GRID size
-- `Spatial Reference System`: Specify the geographic or projected coordinate system for the study
-- `Temporal Coverage`: Specify the temporal extent of your study---i.e. the range of time represented by the data observations.
-- `Temporal Resolution`: Specify the temporal resolution of your study---i.e. the duration of time for which each observation represents or the revisit period for repeated observations
-- `Funding Name`: name of funding for the project
-- `Funding Title`: title of project grant
-- `Award info URI`: web address for award information
-- `Award number`: award number
+- `Key words`: vulnerability, flooding, natural hazards, spatial analysis
+- `Subject`: Geography: Geographic Information Sciences
+- `Date created`: 2 December 2023
+- `Date modified`: 17 December 2023
+- `Spatial Coverage`: Southeastern Vermont (Bennington, Windsor, Windham, Rutland Counties)
+- `Spatial Resolution`: County and town levels, as well as point location data
+- `Spatial Reference System`: EPSG 32145 - NAD 83 VT
+- `Temporal Coverage`: 2014-2022 (inferred)
+- `Temporal Resolution`: N/A
+- `Funding Name`: N/A
+- `Funding Title`: N/A
+- `Award info URI`: N/A
+- `Award number`: N/A
 
 ## Related to
 
-- `OSF Project`:
-- `Pre-analysis Registration`:
-- `Post-analysis Report Registration`:
-- `Preprint`:
-- `Conference Presentation`:
-- `Publication`:
-- `Prior Study`:
+- `OSF Project`: N/A
+- `Pre-analysis Registration`: See docs folder
+- `Post-analysis Report Registration`: N/A
+- `Preprint`: N/A
+- `Conference Presentation`: N/A
+- `Publication`: N/A
+- `Prior Study`: https://doi.org/10.1061/(ASCE)NH.1527-6996.0000112
 - `...`:
 
 ## Metadata for access
