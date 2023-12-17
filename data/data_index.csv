@@ -1,7 +1,7 @@
 path,name,metadata,description
-data/derived/public,FEMA_100yr.shp,metadata,description
-data/derived/public,block_groups.shp,metadata,description
-data/derived/public,dissolved_buffered_ct_river_corridor.shp,metadata,description
-data/derived/public,e911pts.shp,metadata,description
-data/derived/public,river_corridors.shp,metadata,description
-data/derived/public,towns.shp,metadata,description
+data/derived/public,FEMA_100yr.shp,FEMA_100yr_metadata.md,polygon layer of FEMA 100 year flood zones
+data/derived/public,block_groups.shp,block_groups_metadata.md,census block groups polygons by county
+data/derived/public,dissolved_buffered_ct_river_corridor.shp,dissolved_buffered_ct_river_corridors_metadata.md,a polygon layer that I created to approximate the river corridor of the Connecticut River based on 6x channel width meander belt
+data/derived/public,e911pts.shp,e911_metadata.md,e911 point location of all residences and structures with indicator for mobile home
+data/derived/public,river_corridors.shp,river_corridors_metadata.md,polygon layer of VT River Corridors
+data/derived/public,towns.shp,towns_metadata.md,town polygons
