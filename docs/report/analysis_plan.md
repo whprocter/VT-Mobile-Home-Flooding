@@ -1,48 +1,50 @@
-# Title of Study
+# Reproduction of Middlebury College's GEOG 0261's Analysis Flood Hazard Vulnerability in Vermont's Mobile Homes
 
-### Authors
+## Pre-analysis Plan
 
-- First Name Last Name\*, email address, @githubname, ORCID link, affiliated institution(s)
-- First Name Last Name, email address, @githubname, ORCID link, affiliated institution(s)
+I plan to follow the same procedure that the GEOG 0261 course follows in GQIS, just in R. This is essentially a reproduction of the methods used by Baker et al. (2014).
 
-\* Corresponding author and creator
+To perform my analysis, I plan to take the following steps:
+- Load in the e911 point data for buildings and structures in VT
+- Load in FEMA 100 year flood zones polygons
+- Load in VT River corridor polygons
+- Load in county polygons for Bennington, Rutland, Windsor, and Windham counties
+- Load in state
 
-### Abstract
+I will follow the work flow described by Middlebury's GEOG 0261 instructors, and will revise the workflow to tailor it to the functions I use in R.  All of my spatial analysis will be conducted in R.  I will include the workflow(s) in the docs folder of the repository.
 
-Write a brief abstract about your research project.
+For the sake of time, I will utilize the pre-cleaned data that is provided to GEOG 0261 students, but I will address where this data originally came from, and will include the raw unprocessed data in the data\raw\public folder.  
 
-If the project is a reproduction or replication study, include a declaration of the study type with a full reference to the original study.
-For example:
+I will attempt to reproduce Table 1 from the GEOG 0261 analysis, which includes the following table structure:
+- For each of the four counties (which are listed as 4 rows), I will provide:
+  1) The total number of mobile homes in the county (based on e911 point data)
+  2) The number of mobile homes in the county based on e911 point data that are located in the FEMA 100 year flood zone (aka mobile homes at risk - FEMA)
+  3) The number of mobile homes in the county based on e911 point data that are located in the VT River Corridors (aka mobile homes at risk - VT river corridors)
+ 
+The GEOG 0261 analysis also utilizes an area-weighted reaggregation approach to identifying the number of mobile homes in each county.  However, the analysis concludes that this AWR approach is **less accurate** than using the e911 point data.  Thus, this reproduction will **only** use e911 point data to count and locate mobile homes in southeastern Vermont.
 
-This study is a *replication* of:
+Additionally, I will attempt to reproduce a map and table that many students chose to make in GEOG 0261. Many students chose to also analyze mobile home flooding risk by town.  They identified mobile homes that were in the FEMA 100 year flood zone **and/or** the VT River Corridors to capture the most mobile homes possible that are at risk to flooding.  Then, students grouped these MHs by town, and calculated a % of mobile homes at risk rate for each town.  This ratio was calculated by dividing the number of mobile homes at risk (mobile homes in at least one of the flood hazard areas) and divided this by the total number of mobile homes in each town.  The resulting rate indicates what % of a towns mobile homes are at risk to flooding.
 
-> citation to prior study
+These by-town percentages of mobile homes at risk were mapped on a choropleth map by town.  Additionally, the ten towns with the highest percentages of mobile homes at risk are reported in a table, with the town name, total number of mobile homes in the town, number of mobile homes in the town at risk of flooding, and the calculated percentage of mobile homes at risk.
 
-A graphical abstract of the study could also be included as an image here.
+Lastly, I will attempt to address boundary effects contributing to geographic uncertainty of the original study.  Because the VT River Corridors seem to omit the Connecticut River, mobile homes along the banks of the Connecticut River were not included in River Corridor flood risk.  I will attempt to create my own River Corridor polygon for the Connecticut River and report how many mobile homes lie within it, indicating how many mobile homes are "missed" by the original analysis.  I plan to do this by loading a linestring layer of the Connecticut River into QGIS, buffering it to fill the width of the river channel, and then additionally buffering it to 6x the width of the river channel (which approximates the meander belt of the river...the authors of the VT River Corridor system say that a rule of thumb for creating a river corridor is 6x the width of a river channel)
 
-### Study metadata
 
-- `Key words`: Comma-separated list of keywords (tags) for searchability. Geographers often use one or two keywords each for: theory, geographic context, and methods.
-- `Subject`: select from the [BePress Taxonomy](http://digitalcommons.bepress.com/cgi/viewcontent.cgi?article=1008&context=reference)
-- `Date created`: date when project was started
-- `Date modified`: date of most recent revision
-- `Spatial Coverage`: Specify the geographic extent of your study. This may be a place name and link to a feature in a gazetteer like GeoNames or OpenStreetMap, or a well known text (WKT) representation of a bounding box.
-- `Spatial Resolution`: Specify the spatial resolution as a scale factor, description of the level of detail of each unit of observation (including administrative level of administrative areas), and/or or distance of a raster GRID size
-- `Spatial Reference System`: Specify the geographic or projected coordinate system for the study, e.g. EPSG:4326
-- `Temporal Coverage`: Specify the temporal extent of your study---i.e. the range of time represented by the data observations.
-- `Temporal Resolution`: Specify the temporal resolution of your study---i.e. the duration of time for which each observation represents or the revisit period for repeated observations
-- `Funding Name`: name of funding for the project
-- `Funding Title`: title of project grant
-- `Award info URI`: web address for award information
-- `Award number`: award number
 
-#### Original study spatio-temporal metadata
 
-- `Spatial Coverage`: extent of original study
-- `Spatial Resolution`: resolution of original study
-- `Spatial Reference System`: spatial reference system of original study
-- `Temporal Coverage`: temporal extent of original study
-- `Temporal Resolution`: temporal resolution of original study
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Study design
 
@@ -56,8 +58,10 @@ Enumerate specific **hypotheses** to be tested or **research questions** to be i
 
 ### Computational environment
 
-Define the hardware, operating system, and software requirements for the research.
-Include citations to important software projects, plugins or packages and their versions.
+I utilized R version 4.3.1 (2023-06-16 ucrt) -- "Beagle Scouts" with the following platform: x86_64-w64-mingw32/x64 (64-bit).  I accessed R using the RStudio interface.  All code was run successfully using this enviornment on 12/17/23.
+
+Packages are indicated in the procedure code (accessed via Groundhog).  The packages include "downloader", "rdhs", "haven", "readr", "tidyverse", "pastecs", "stars", "sf", "sp", "classInt", "tmap", "units", "knitr", "tibble", "here", "dplyr", "rgdal".
+
 
 ### Data and variables
 
