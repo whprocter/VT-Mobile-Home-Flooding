@@ -2,7 +2,7 @@
 title: "Analysis"
 author: "William Procter"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: html_document
 editor_options:
   markdown:
     wrap: sentence
@@ -23,12 +23,14 @@ flooded! Some of the most affected people were living in mobile homes, whether o
 land or in mobile home parks. At least 130 mobile homes were destroyed and an additional 300 severely
 damaged (Figure 1). Our problem will evaluate assessments of flooding risks with a focus on mobile homes
 in Vermont.
+
 There are two different ways of assessing flooding risk in Vermont: one is by the federal agency, FEMA
 (The Federal Emergency Management Association), and one by a state agency, Vermont Rivers Program.
 The federal agency, FEMA, estimates flood risk in terms of inundation from rising water levels in stable
 river channels. Based on existing channels, FEMA hydrologists estimate the region of land that would be
 potentially flooded by a 1% (100-year) flood. The residents with mortgages in that region are required to
 purchase flood insurance.
+
 The state of Vermont’s River Corridors Program estimates flooding risk differently, using river corridors.
 After Irene, the state of Vermont recognized that the most damaging flooding in Vermont is not due to
 inundation but rather due to fluvial erosion: the erosion of riverbanks as the river channel widens or
