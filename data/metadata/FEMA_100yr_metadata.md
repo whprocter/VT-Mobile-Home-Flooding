@@ -1,14 +1,14 @@
 - `Title`: FEMA_100yr.shp
-- `Abstract`: polygons of flood zones determined by FEMA
+- `Abstract`: multipart polygons of flood zones determined by FEMA
 - `Spatial Coverage`: Bennington, Rutland, Windham, and Windsor counties
 - `Spatial Resolution`: N/A
 - `Spatial Reference System`: EPSG 32145 - NAD 83 Vermont
 - `Temporal Coverage`: Some time 2014-2022
 - `Temporal Resolution`: N/A
-- `Lineage`: Downloaded from the VT Open GeoData Portal by GEOG 0261 instructors, and cleaned to only include the 4 southernmost counties, and to select only the `sitetype` variable.
+- `Lineage`: Downloaded from the VT Open GeoData Portal by GEOG 0261 instructors, and cleaned to only include the 4 southernmost counties.
 - `Distribution`: The raw data is publicly available from the VT Open GeoData Portal
 - `Constraints`: N/A
-- `Data Quality`: Assumed to be accurate and representative of all residences and structures in Southern VT
+- `Data Quality`: Assumed to be accurate and representative of all determined FEMA flood zones in southern VT
 - `Variables`: For each variable, enter the following information. If you have two or more variables per data source, you may want to present this information in table form (shown below)
   - `Label`: variable name as used in the data or code
   - `Alias`: intuitive natural language name
