@@ -1,7 +1,12 @@
 path,name,metadata,description
-| path | name | metadata | description | :--: | :--: | :--: | :--: |
-| FLD_ZONE | Identifies type of flood zone...FEMA Flood Zone Codes| All codes beginning with 'A' are included in the 1% flood risk zone (100-year flood risk) | character | ... | ... | n/a | n/a |
-| geometry | point geometry| ... | unknown | ... | ... | n/a | n/a |
-dissolved_buffered_ct_river_corridor_metadata
+| path | name | metadata | description |
+| path | name | metadata | description |
+| path | name | metadata | description |
+| path | name | metadata | description |
+| path | name | metadata | description |
+| path | name | metadata | description |
+| path | name | metadata | description |
+| path | name | metadata | description |
+| path | name | metadata | description |
 
 
