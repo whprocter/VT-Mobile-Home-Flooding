@@ -501,7 +501,6 @@ final_table
 
 # Export the final table to a CSV
 write.csv(final_table_1, file = file.path(results_tables, 'Table1.csv'), row.names = FALSE)
-
 ```
 
 Unplanned deviation for reproduction: I decided to calculate "rates "risk rates" to indicate what proportion of a county's mobile homes lie within the FEMA flood zones and the River Corridors, respectively.  They are pretty similar for Rutland and Windham counties.  In Bennington County, the FEMA risk rate is higher than the River Corridor risk rate.  In Windsor County, the River Corridor risk rate is higher than the FEMA risk rate.
@@ -570,7 +569,9 @@ most_vulnerable_towns <- town_data %>%
   head(10)
 
 most_vulnerable_towns
-  
+
+# Export the table to a CSV
+write.csv(most_vulnerable_towns, file = file.path(results_tables, 'TownsWithHighestPercentageOfMobileHomesAtRisk.csv'), row.names = FALSE)
 ```
 
 Results slightly differ between this ant the GEOG 0261 results because I directly downloaded the towns.shp file from the VT Open GeoData Portal, while the GEOG 0261 class uses a pre-cleaned provided towns shapefile layer.  I could not use the provided one due to file corruption issues.  However, the provided one for the class distinguishes between Rutland Town and Rutland City, while the layer that I downloaded treated the two as a combined town of "Rutland." Rutland Town has a pct_mh_at_risk value of 57.89, so if my towns file distinguished just the town portion, it would be in the top 10 of highest risk towns for mobile homes at risk.
@@ -660,7 +661,7 @@ tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.si
 ## Sources of Geographic uncertainty
 
 Construct validity
-Small number problem if a town doesn't have a ton of mobile homes
+Small number problem if a town doesn't have a ton of mobile homes...for rates
 Lineage section to specify the data sources
 
 ## Analysis
