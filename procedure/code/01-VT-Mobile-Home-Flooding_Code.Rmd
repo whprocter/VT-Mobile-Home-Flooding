@@ -390,7 +390,7 @@ final_table_1 <- MHs_by_county %>%
   mutate(MHs_at_risk_River_Corridors = mh_rc_by_county$mobile_home_count) %>%
   mutate(FEMA_rate = MHs_at_risk_FEMA / number_of_MHs) %>%
   mutate(RC_rate = MHs_at_risk_River_Corridors / number_of_MHs)
-final_table
+final_table_1
 
 # Export the final table to a CSV
 write.csv(final_table_1, file = file.path(results_tables, 'Table1.csv'), row.names = FALSE)
