@@ -13,17 +13,6 @@ knit: (function(inputFile, encoding) {
 
 # Abstract
 
-Accurate risk assessment is a crucial element for mounting effective responses to natural disasters. Unfortunately, existing methodologies sometimes fall short, underestimating vulnerabilities and leading to inadequate planning and responses. An illustrative case is Tropical Storm Irene, a catastrophic event that struck Vermont in 2011. The storm, marked by unprecedented rainfall on August 28 and 29, resulted in the destruction of 480 bridges, 960 culverts, and $350 million in road damage. Thirteen mountain communities were cut off, and even Vermont's emergency management offices were flooded. Particularly impacted were residents in mobile homes, with at least 130 destroyed and 300 severely damaged. This study focuses on evaluating flood risk assessments, specifically in relation to mobile homes in Vermont.
-
-Two distinct methodologies for assessing flooding risk in Vermont are employed—one by the federal agency FEMA (Federal Emergency Management Association) and the other by the state agency Vermont Rivers Program. FEMA estimates flood risk by evaluating inundation from rising water levels in stable river channels, focusing on a 1% (100-year) flood event. Residents with mortgages in the identified flood-prone areas are mandated to purchase flood insurance.
-
-In contrast, Vermont's River Corridors Program assesses flooding risk by considering river corridors. Post-Irene, Vermont recognized that the most significant damage arose not from inundation but from fluvial erosion—the widening or migration of river channels. Regions at risk are those where rivers may erode and migrate in the future.
-
-Our research employs spatial overlay analysis, utilizing both existing and newly created datasets to assess the vulnerability of mobile home parks to flooding. The analysis incorporates publicly available data sets, such as Vermont E911.  This comprehensive approach seeks to enhance our understanding of flood risk and contribute to more effective disaster preparedness and response strategies.
-
-Overall, the goal of this study is to reproduce 
-
-
 Middlebury College's Human Geography with GIS course (GEOG 0261) regularly conducts an analysis on "Flood Hazard Vulnerability in Vermont's Mobile Homes" using QGIS; the GEOG 0261 analysis builds on Baker et al.'s 2011 study on *Rapid Flood Exposure Assessment of Vermont Mobile Home Parks Following Tropical Storm Irene* (see bottom of this report for formal citation).
 
 In this report, I conduct a reproduction study of the analysis conducted in GEOG 0261, however I use a code-based approach to spatial analysis using R instead of QGIS. The motivation for this study is to see whether a basic spatial analysis assignment geared towards beginner geography students can be reproduced using a code-based approach.  Additionally, I seek to improve internal validity to the study by reducing the impact of a boundary distortion along the Connecticut River.  See below for background on the "Flood Hazard Vulnerability in Vermont's Mobile Homes" assignment that students in GEOG 0261 are assigned:
