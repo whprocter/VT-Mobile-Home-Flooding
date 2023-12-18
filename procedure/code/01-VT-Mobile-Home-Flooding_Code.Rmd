@@ -553,7 +553,7 @@ mh_flooded_by_town <- mh_flooded %>%
   count(town, name = "at_risk_count")
 ```
 
-## Create a table to show the 10 towns with the highest mobile home flooding risk
+## Create a table to show the 10 towns with the highest mobile home flooding risk (Table 2)
 ```{r}
 # Join number of mobile homes at risk to the total number of mobile homes in each town, by town
 town_data <- full_join(mh_towns_grouped, mh_flooded_by_town, by = "town")
@@ -579,7 +579,7 @@ write.csv(most_vulnerable_towns, file = file.path(results_tables, 'TownsWithHigh
 Results slightly differ between this ant the GEOG 0261 results because I directly downloaded the towns.shp file from the VT Open GeoData Portal, while the GEOG 0261 class uses a pre-cleaned provided towns shapefile layer.  I could not use the provided one due to file corruption issues.  However, the provided one for the class distinguishes between Rutland Town and Rutland City, while the layer that I downloaded treated the two as a combined town of "Rutland." Rutland Town has a pct_mh_at_risk value of 57.89, so if my towns file distinguished just the town portion, it would be in the top 10 of highest risk towns for mobile homes at risk.
 
 
-## Plot a choropleth map of the % of mobile homes in each town that are at risk to flooding, and export
+## Plot a choropleth map of the % of mobile homes in each town that are at risk to flooding, and export (Map 1)
 ```{r}
 # Visualize!
 tmap_mode("plot")
@@ -672,9 +672,7 @@ A slight variation, as discussed earlier in the report, arises from a difference
 
 Reproducing the town-based risk map yielded the same exact results as the GEOG 0261 QGIS approach, except for Rutland.  When sorting towns based on highest percentage of their mobile homes at risk in the QGIS approach (Table 2), Rutland Town had the third highest % of mobile homes at risk out of all of the towns in the four counties.  However, when considering Rutland as a single entity in my R reproduction, it does make the top 10 list.  Instead, all the towns get shifted up one place, with Proctor, VT being the town with the 10th highest risk.  There are some threats to validity here, namely the small number problem, which I will addreess in the Discussion section.
 
-Woodford and Woodstock have the first and second highest % of mobile homes at risk in both R and QGIS, with 85.18% and 68.57% respectively of their mobile homes at some risk to flooding, as determined by FEMA or River Corridors
-
-
+Woodford and Woodstock have the first and second highest % of mobile homes at risk in both R and QGIS, with 85.18% and 68.57% respectively of their mobile homes at some risk to flooding, as determined by FEMA or River Corridors.
 
 
 ## R code vs. QGIS GUI: 
@@ -682,16 +680,13 @@ Woodford and Woodstock have the first and second highest % of mobile homes at ri
 Ultimately, the main goal of this reproduction was to find a way using R code to do all the spatial analysis steps that are taught to GEOG 0261 students in QGIS in the "Flood Hazard Vulnerability in Vermont's Mobile Homes" assignment for the course.  I followed the exact same workflow provided by the instructors of GEOG 0261 to create Table 1.  While I technically could have done a select by location to identify the mobile homes in the flood zones and river corridors, I chose to use a join by location and then a filter because of a warning that was thrown and because it was computationally faster.
 
 
-I utilized the stars and tmap libraries to work with the spatial data.
-
-
+I relied on the stars and tmap libraries to work with the spatial data.
 
 
 
 ## Addition of the estimated Connecticut River corridor: 
 
 Based on my estimation of the river corridor for the Connecticut River, I found that 61 mobile homes in Windham and 283 in Windsor are missed when using the existing river corridor shapefile that is published on the VT Open GeoData Portal and is provided to the GEOG 0261 students.  Although I likely overestimate the extent of the river corridor a bit (since I did not account for geologic conditions or topography/slope...I only considered meander belt width), this shows that VT River Corridors do miss out on identifying mobile homes that could be at risk.  Fortunately, the FEMA Flood Zones do seem to contain most of the mobile homes along the Connecticut River that do appear to be at risk (see the presence of FEMA Flood Zones in the first map presented at the top of this report...the map of Flood Zones).
-
 
 
 
@@ -704,7 +699,10 @@ Small number problem if a town doesn't have a ton of mobile homes...for rates
 Lineage section to specify the data sources
 
 
-### Future additions to the study
+### Future additions to the study:
+Future additions of the study could work to improve on the sources of uncertainty and threats to validity.  Notably, a future study could count the number of mobile home points (from e911 data) in each county to use as the first column in Table 1 (and thus to use as a denominator in the rate columns).  Currently, the table relies on ACS estimates of mobile homes to provide values for the mobile_home_count variable.  However, the ACS survey is just a well-informed estimate, whereas e911 points are known locations of mobile homes.  
+
+Additionally, since it is unknown when the GEOG 0261 data was actually constructed, someone could do reproduce this study with all new downloaded data, especially using newer ACS data.
 
 
 ## Pedagogical implications: 
