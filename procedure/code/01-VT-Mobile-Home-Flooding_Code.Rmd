@@ -503,12 +503,12 @@ final_table
 write.csv(final_table_1, file = file.path(results_tables, 'Table1.csv'), row.names = FALSE)
 ```
 
-Unplanned deviation for reproduction: I decided to calculate "rates "risk rates" to indicate what proportion of a county's mobile homes lie within the FEMA flood zones and the River Corridors, respectively.  They are pretty similar for Rutland and Windham counties.  In Bennington County, the FEMA risk rate is higher than the River Corridor risk rate.  In Windsor County, the River Corridor risk rate is higher than the FEMA risk rate.
+Unplanned deviation for reproduction: I decided to calculate "rates "risk rates" to indicate what proportion of a county's mobile homes lie within the FEMA flood zones and the River Corridors, respectively.  They are pretty similar for Windham County.  In Bennington County, the FEMA risk rate is higher than the River Corridor risk rate.  In Windsor County and Rutland County, the River Corridor risk rate is higher than the FEMA risk rate.
 
 
 
 
-# Visualize MH flood risk by town
+# Visualize MH flood risk by town:
 
 
 ## First, I need to find the number of mobile homes by town
@@ -551,8 +551,10 @@ mh_flooded <- mh_flooded %>%
 mh_flooded_by_town <- mh_flooded %>%
   group_by(town) %>%
   count(town, name = "at_risk_count")
+```
 
-
+## Create a table to show the 10 towns with the highest mobile home flooding risk
+```{r}
 # Join number of mobile homes at risk to the total number of mobile homes in each town, by town
 town_data <- full_join(mh_towns_grouped, mh_flooded_by_town, by = "town")
 
@@ -656,13 +658,96 @@ tm_layout(legend.width=3, legend.text.size = .6, title.size = 1, legend.title.si
 ```
 
 
+# Results
+
+## Table 1: Mobile Homes at Risk by County (FEMA vs. River Corridors)
+
+Ultimately, an R-based code approach to this spatial analysis study yields the exact same results that are found by Middlebury's GEOG 0261 class using the QGIS GUI.  I find that the number of total mobile homes (ACS data), mobile homes at risk (e911 and FEMA data), and mobile homes at risk (e911 and river corridor data) for Bennington, Rutland, Windham, and Windsor Counties are exactly the same. In Bennington County, the FEMA approach identifies significantly more mobile homes to be at risk than the River Corridor approach does.  In Windsor County, the two approaches predict about the same.  In Rutland and Windsor Counties, the River Corridor approach identifies significantly more mobile homes to be at risk than the FEMA approach.  These findings were true for both total number of mobile homes at risk **and** proportion of mobile homes in the county that are at risk.  
 
 
-## Sources of Geographic uncertainty
+## Map 1 and Table 2: Percentage of Towns at Risk to Flooding (Either FEMA or River Corridor), by Town
 
+A slight variation, as discussed earlier in the report, arises from a difference in the town shapefile layer.  The town layer that was provided to the GEOG 0261 class distinguishes between Rutland Town and Rutland City, while the town layer that I downloaded from the American Community Survey (since I was having corrupt file issues with the towns.shp used by the GEOG 0261 class) just shows Rutland as a single town.It is possible that the course instructors and I both started with the same town shapefile, but the instructors could have combined the two towns into one during their data processing.  Another reason could be that between the time the instructors downloaded the town shapefile and the time I downloaded the file, the town borders could have changed (ie. Rutland was broked into Rutland City and Rutland Town).  It is difficult to know exactly without knowing when the instructors downloaded their data and what they did to process it.
+
+
+Reproducing the town-based risk map yielded the same exact results as the GEOG 0261 QGIS approach, except for Rutland.  When sorting towns based on highest percentage of their mobile homes at risk in the QGIS approach (Table 2), Rutland Town had the third highest % of mobile homes at risk out of all of the towns in the four counties.  However, when considering Rutland as a single entity in my R reproduction, it does make the top 10 list.  Instead, all the towns get shifted up one place, with Proctor, VT being the town with the 10th highest risk.  There are some threats to validity here, namely the small number problem, which I will addreess in the Discussion section.
+
+Woodford and Woodstock have the first and second highest % of mobile homes at risk in both R and QGIS, with 85.18% and 68.57% respectively of their mobile homes at some risk to flooding, as determined by FEMA or River Corridors
+
+
+
+
+## R code vs. QGIS GUI: 
+
+Ultimately, the main goal of this reproduction was to find a way using R code to do all the spatial analysis steps that are taught to GEOG 0261 students in QGIS in the "Flood Hazard Vulnerability in Vermont's Mobile Homes" assignment for the course.  I followed the exact same workflow provided by the instructors of GEOG 0261 to create Table 1.  While I technically could have done a select by location to identify the mobile homes in the flood zones and river corridors, I chose to use a join by location and then a filter because of a warning that was thrown and because it was computationally faster.
+
+
+I utilized the stars and tmap libraries to work with the spatial data.
+
+
+
+
+
+## Addition of the estimated Connecticut River corridor: 
+
+Based on my estimation of the river corridor for the Connecticut River, I found that 61 mobile homes in Windham and 283 in Windsor are missed when using the existing river corridor shapefile that is published on the VT Open GeoData Portal and is provided to the GEOG 0261 students.  Although I likely overestimate the extent of the river corridor a bit (since I did not account for geologic conditions or topography/slope...I only considered meander belt width), this shows that VT River Corridors do miss out on identifying mobile homes that could be at risk.  Fortunately, the FEMA Flood Zones do seem to contain most of the mobile homes along the Connecticut River that do appear to be at risk (see the presence of FEMA Flood Zones in the first map presented at the top of this report...the map of Flood Zones).
+
+
+
+
+# Discussion
+
+
+## Sources of uncertainty and geographic threats to validity:
 Construct validity
 Small number problem if a town doesn't have a ton of mobile homes...for rates
 Lineage section to specify the data sources
+
+
+### Future additions to the study
+
+
+## Pedagogical implications: 
+
+
+## Policy implications: 
+
+
+### Connecticut River:
+
+
+
+
+
+# Conclusion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Analysis
 
@@ -670,26 +755,20 @@ Describe the methods of analysis that will directly test the hypotheses or provi
 This section should explicitly define any spatial / statistical *models* and their *parameters*, including *grouping* criteria, *weighting* criteria, and *significance thresholds*.
 Also explain any follow-up analyses or validations.
 
-# Results
 
-Describe how results are to be presented.
-
-# Discussion
-
-Describe how the results are to be interpreted *vis a vis* each hypothesis or research question.
 
 # Integrity Statement
+I followed and accomplished what I set out to do in my preanalysis plan.  I did make a few slight deviations to improve the code and the interpretability of my report/findings:
+- To isolate the mobile homes in the flood risk polygons, instead of selecting by location (1 step), I ended up using a spatial join and then filtering based on mobile homes that were in the flood risk layer(2 steps) because of a warning message I got with the 1 step approach.  The 1 step approach took much longer to run.
+- I ended up creating a polygon layer that is the difference between FEMA 100yr Flood Zones and VT River Corridor polygons, to show where the two methods of spatially identifying flood risk do not line up.  I then plotted this in an interactive tmap with a satellite basemap so that the reader can play around with it to see where they don't align.
 
-Include an integrity statement - The authors of this preregistration state that they completed this preregistration to the best of their knowledge and that no other preregistration exists pertaining to the same hypotheses and research.
-If a prior registration *does* exist, explain the rationale for revising the registration here.
+I - the author of this reproduction study - state that I completed what I outlined in my preregistration to the best of my knowledge and that no other preregistration exists pertaining to the same hypotheses and research.
 
 # Acknowledgements
-
-- `Funding Name`: name of funding for the project
-- `Funding Title`: title of project grant
-- `Award info URI`: web address for award information
-- `Award number`: award number
 
 This report is based upon the template for Reproducible and Replicable Research in Human-Environment and Geographical Sciences, DOI:[10.17605/OSF.IO/W29MQ](https://doi.org/10.17605/OSF.IO/W29MQ)
 
 # References
+Baker, D., Hamshaw, S. D., & Hamshaw, K. A. (2014). Rapid flood exposure assessment of Vermont mobile home parks following Tropical Storm Irene. Natural Hazards Review, 15(1), 27-37. DOI: 10.1061/(ASCE)NH.1527-6996.0000112.
+
+Schmitt, R. R. (1978). Threats to validity involving geographic space. Socio-Economic Planning Sciences, 12(4), 191–195. https://doi.org/10.1016/0038-0121(78)90044-7
