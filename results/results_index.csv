@@ -1,1 +1,3 @@
 ﻿path,name,description
+results/tables,Table1.csv,Reproduction of Table 1 from GEGO 0261 study - number of mobile homes, mobile homes at risk (FEMA + River Corridors), and % of mobile homes at risk by county
+results/tables,TownsWithHighestPercentageOfMobileHomesAtRisk.csv,10 towns with the highest percentage of mobile homes at risk to flooding (either FEMA or River Corridors)
