@@ -1,3 +1,6 @@
 ﻿path,name,description
-results/tables,Table1.csv,Reproduction of Table 1 from GEGO 0261 study - number of mobile homes & mobile homes at risk (FEMA + River Corridors) & % of mobile homes at risk by county
-results/tables,TownsWithHighestPercentageOfMobileHomesAtRisk.csv,10 towns with the highest percentage of mobile homes at risk to flooding (either FEMA or River Corridors)
+/results/tables,Table1.csv,Reproduction of Table 1 from GEGO 0261 study - number of mobile homes & mobile homes at risk (FEMA + River Corridors) & % of mobile homes at risk by county
+/results/tables,TownsWithHighestPercentageOfMobileHomesAtRisk.csv,10 towns with the highest percentage of mobile homes at risk to flooding (either FEMA or River Corridors)
+/results/figures,FEMA_flood_zone_map.pdf,Map of the FEMA 100 year flood zone in Southern VT
+/results/figures,river_corridor_map.pdf,Map of the Vermont River Corridors (from Flood Ready Vermont) in Southern VT
+/results/figures,pct_mh_at_risk_by_town.pdf,Map of % of mobile homes at risk by town
