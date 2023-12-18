@@ -13,7 +13,22 @@ knit: (function(inputFile, encoding) {
 
 # Abstract
 
-Accurate assessment of risk is an essential for effective response to any natural disaster. The methodologies
+Accurate risk assessment is a crucial element for mounting effective responses to natural disasters. Unfortunately, existing methodologies sometimes fall short, underestimating vulnerabilities and leading to inadequate planning and responses. An illustrative case is Tropical Storm Irene, a catastrophic event that struck Vermont in 2011. The storm, marked by unprecedented rainfall on August 28 and 29, resulted in the destruction of 480 bridges, 960 culverts, and $350 million in road damage. Thirteen mountain communities were cut off, and even Vermont's emergency management offices were flooded. Particularly impacted were residents in mobile homes, with at least 130 destroyed and 300 severely damaged. This study focuses on evaluating flood risk assessments, specifically in relation to mobile homes in Vermont.
+
+Two distinct methodologies for assessing flooding risk in Vermont are employed—one by the federal agency FEMA (Federal Emergency Management Association) and the other by the state agency Vermont Rivers Program. FEMA estimates flood risk by evaluating inundation from rising water levels in stable river channels, focusing on a 1% (100-year) flood event. Residents with mortgages in the identified flood-prone areas are mandated to purchase flood insurance.
+
+In contrast, Vermont's River Corridors Program assesses flooding risk by considering river corridors. Post-Irene, Vermont recognized that the most significant damage arose not from inundation but from fluvial erosion—the widening or migration of river channels. Regions at risk are those where rivers may erode and migrate in the future.
+
+Our research employs spatial overlay analysis, utilizing both existing and newly created datasets to assess the vulnerability of mobile home parks to flooding. The analysis incorporates publicly available data sets, such as Vermont E911.  This comprehensive approach seeks to enhance our understanding of flood risk and contribute to more effective disaster preparedness and response strategies.
+
+Overall, the goal of this study is to reproduce 
+
+
+Middlebury College's Human Geography with GIS course (GEOG 0261) regularly conducts an analysis on "Flood Hazard Vulnerability in Vermont's Mobile Homes" using QGIS; the GEOG 0261 analysis builds on Baker et al.'s 2011 study on *Rapid Flood Exposure Assessment of Vermont Mobile Home Parks Following Tropical Storm Irene* (see bottom of this report for formal citation).
+
+In this report, I conduct a reproduction study of the analysis conducted in GEOG 0261, however I use a code-based approach to spatial analysis using R instead of QGIS. The motivation for this study is to see whether a basic spatial analysis assignment geared towards beginner geography students can be reproduced using a code-based approach.  Additionally, I seek to improve internal validity to the study by reducing the impact of a boundary distortion along the Connecticut River.  See below for background on the "Flood Hazard Vulnerability in Vermont's Mobile Homes" assignment that students in GEOG 0261 are assigned:
+
+"Accurate assessment of risk is an essential for effective response to any natural disaster. The methodologies
 used to assess risk can end up underestimating vulnerabilities. Tropical Storm Irene offers an example of
 inadequate assessment of risk, which then leads to inadequate planning for and response to a disaster. The
 storm inundated Vermont with unprecedented rainfall on August 28 and 29 of 2011. The storm destroyed
@@ -23,71 +38,19 @@ flooded! Some of the most affected people were living in mobile homes, whether o
 land or in mobile home parks. At least 130 mobile homes were destroyed and an additional 300 severely
 damaged (Figure 1). Our problem will evaluate assessments of flooding risks with a focus on mobile homes
 in Vermont.
-
 There are two different ways of assessing flooding risk in Vermont: one is by the federal agency, FEMA
 (The Federal Emergency Management Association), and one by a state agency, Vermont Rivers Program.
 The federal agency, FEMA, estimates flood risk in terms of inundation from rising water levels in stable
 river channels. Based on existing channels, FEMA hydrologists estimate the region of land that would be
 potentially flooded by a 1% (100-year) flood. The residents with mortgages in that region are required to
 purchase flood insurance.
-
 The state of Vermont’s River Corridors Program estimates flooding risk differently, using river corridors.
 After Irene, the state of Vermont recognized that the most damaging flooding in Vermont is not due to
 inundation but rather due to fluvial erosion: the erosion of riverbanks as the river channel widens or
 migrates to form new channels (Figure 1 and Figure 2). By this estimation, regions where rivers may erode
-and migrate to in the future are also at risk of flooding.
-
-The research involved a spatial overlay analysis using existing and
-newly created data sets to assess the vulnerability of mobile home
-parks to flooding (Fig. 3). The analysis used a number of publicly
-available data sets, including Vermont E911, a mobile home park
-registry, FIRMs, and orthographic imagery.
+and migrate to in the future are also at risk of flooding."
 
 
-This is a reproduction of a study that is taught in Middlebury College's Human Geography with GIS course, which itself builds on Baker et al's 2011 study on **Rapid Flood Exposure Assessment of Vermont Mobile Home Parks Following Tropical Storm Irene**
-
-Write a brief abstract about your research project.
-
-If the project is a reproduction or replication study, include a declaration of the study type with a full reference to the original study.
-For example:
-
-This study is a *replication* of:
-
-> citation to prior study
-
-A graphical abstract of the study could also be included as an image here.
-
-# Study metadata
-
-- `Key words`: Comma-separated list of keywords (tags) for searchability. Geographers often use one or two keywords each for: theory, geographic context, and methods.
-- `Subject`: select from the [BePress Taxonomy](http://digitalcommons.bepress.com/cgi/viewcontent.cgi?article=1008&context=reference)
-- `Date created`: date when project was started
-- `Date modified`: date of most recent revision
-- `Spatial Coverage`: Specify the geographic extent of your study. This may be a place name and link to a feature in a gazetteer like GeoNames or OpenStreetMap, or a well known text (WKT) representation of a bounding box.
-- `Spatial Resolution`: Specify the spatial resolution as a scale factor, description of the level of detail of each unit of observation (including administrative level of administrative areas), and/or or distance of a raster GRID size
-- `Spatial Reference System`: Specify the geographic or projected coordinate system for the study, e.g. EPSG:4326
-- `Temporal Coverage`: Specify the temporal extent of your study---i.e. the range of time represented by the data observations.
-- `Temporal Resolution`: Specify the temporal resolution of your study---i.e. the duration of time for which each observation represents or the revisit period for repeated observations
-- `Funding Name`: name of funding for the project
-- `Funding Title`: title of project grant
-- `Award info URI`: web address for award information
-- `Award number`: award number
-
-## Original study spatio-temporal metadata
-
-- `Spatial Coverage`: extent of original study
-- `Spatial Resolution`: resolution of original study
-- `Spatial Reference System`: spatial reference system of original study
-- `Temporal Coverage`: temporal extent of original study
-- `Temporal Resolution`: temporal resolution of original study
-
-# Study design
-
-Describe how the study relates to prior literature, **reproduction study**, **reanalysis study**, or **replication study**?
-
-Also describe the original study archetype, e.g. is it **observational**, **experimental**, **quasi-experimental**, or **exploratory**?  Original study is observational
-
-Enumerate specific **hypotheses** to be tested or **research questions** to be investigated here, and specify the type of method, statistical test or model to be used on the hypothesis or question.
 
 # Materials and procedure
 
@@ -163,7 +126,7 @@ scratch <- here("data", "scratch")
 
 ## Data and variables
 
-There are four layers for this analysis, each coming from a different primary source.  Primary data sources for the study are to include ...
+There are five layers for this analysis, each coming from a different primary source.  Primary data sources for the study are to include ...
 
 1. e911pts.shp - point - epsg: 32145
 e911 point location data for all residences and buildings in Vermont, for use with emergency response.  The data file can be found on the Vermont Open GeoData Portal <http://geodata.vermont.gov/>
@@ -175,7 +138,7 @@ FEMA Flood Zone polygons with codes.  Codes starting with "A" indicate a 100-yea
 
 3. river_corridors.shp - polygon - epsg: 32145
 Vermont river corridor polygons, as defined by Flood Ready Vermont.  This flood hazard approach includes streams (with a 50 foot buffer) and rivers with watersheds more than 2km.  The data file can be found on the Vermont Open GeoData Portal <http://geodata.vermont.gov/>
-- 
+
 
 4. block_groups.shp - polygon - epsg: 32145
 Census block group polygons in southern Vermont, with data on housing.  The data file was acquired from the US Census ACS Survey 2014-2018
@@ -183,94 +146,35 @@ Census block group polygons in southern Vermont, with data on housing.  The data
 - totalHU: estimated total number of all housing units within the block group
 - county: name of county in which the block_group is located
 
+5. towns.shp - polygon - epsg:32145
+Downloaded from the US Census Bureau.
+- townName: name of the town
 
-Each of the next subsections describes one data source.
 
-### Primary data source1 name
-
-- `Title`: Title of data source
-- `Abstract`: Brief description of the data source
-- `Spatial Coverage`: Specify the geographic extent of your study. This may be a place name and link to a feature in a gazetteer like GeoNames or OpenStreetMap, or a well known text (WKT) representation of a bounding box.
-- `Spatial Resolution`: Specify the spatial resolution as a scale factor, description of the level of detail of each unit of observation (including administrative level of administrative areas), and/or or distance of a raster GRID size
-- `Spatial Reference System`: Specify the geographic or projected coordinate system for the study
-- `Temporal Coverage`: Specify the temporal extent of your study---i.e. the range of time represented by the data observations.
-- `Temporal Resolution`: Specify the temporal resolution of your study---i.e. the duration of time for which each observation represents or the revisit period for repeated observations
-- `Lineage`: Describe and/or cite data sources and/or methodological steps planned to create this data source.
-  - sampling scheme, including spatial sampling
-  - target sample size and method for determining sample size
-  - stopping criteria for data collection and sampling (e.g. sample size, time elapsed)
-  - de-identification / anonymization
-  - experimental manipulation
-- `Distribution`: Describe who will make the data available and how?
-- `Constraints`: Legal constraints for *access* or *use* to protect *privacy* or *intellectual property rights*
-- `Data Quality`: State any planned quality assessment
-- `Variables`: For each variable, enter the following information. If you have two or more variables per data source, you may want to present this information in table form (shown below)
-  - `Label`: variable name as used in the data or code
-  - `Alias`: intuitive natural language name
-  - `Definition`: Short description or definition of the variable. Include measurement units in description.
-  - `Type`: data type, e.g. character string, integer, real
-  - `Accuracy`: e.g. uncertainty of measurements
-  - `Domain`: Expected range of Maximum and Minimum of numerical data, or codes or categories of nominal data, or reference to a standard codebook
-  - `Missing Data Value(s)`: Values used to represent missing data and frequency of missing data observations
-  - `Missing Data Frequency`: Frequency of missing data observations: not yet known for data to be collected
-
-| Label | Alias | Definition | Type | Accuracy | Domain | Missing Data Value(s) | Missing Data Frequency |
-| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| variable1 | ... | ... | ... | ... | ... | ... | ... |
-| variable2 | ... | ... | ... | ... | ... | ... | ... |
-
-### Primary data source2 name
-
-... same form as above...
+**You can find the full metadata for each of these variables in the `data/metadata` section of the repository**
 
 
 
 
 ## Prior observations  
 
-Prior experience with the study area, prior data collection, or prior observation of the data can compromise the validity of a study, e.g. through p-hacking.
-Therefore, disclose any prior experience or observations at the time of study pre-registration here, with example text below:
+I - the author of this reproduction study - have spent the past 3.5 years living as a student in Vermont.  I am familiar with the flood risk faced in Vermont, the geography of the state, and how the state makes data publicly accessible.  Thus, I have prior experience with the entirety of this study, although this is not a concern given that no statistical tests are conducted and no models are built.  The goal of this study is merely to reproduce a study that is usually conducted in QGIS but in R.
 
-At the time of this study pre-registration, the authors had _____ prior knowledge of the geography of the study region with regards to the ____ phenomena to be studied.
-This study is related to ____ prior studies by the authors
+I was also a student in GEOG 0261 (formerly GEOG 0120) and I conducted this study in January, 2022 in QGIS.
 
-For each primary data source, declare the extent to which authors had already engaged with the data:
-
-- [ ] no data collection has started
-- [ ] pilot test data has been collected
-- [ ] data collection is in progress and data has not been observed
-- [ ] data collection is in progress and __% of data has been observed
-- [ ] data collection is complete and data has been observed. Explain how authors have already manipulated / explored the data.
-
-For each secondary source, declare the extent to which authors had already engaged with the data:
-
-- [ ] data is not available yet
-- [ ] data is available, but only metadata has been observed
-- [ ] metadata and descriptive statistics have been observed
-- [ ] metadata and a pilot test subset or sample of the full dataset have been observed
-- [ ] the full dataset has been observed. Explain how authors have already manipulated / explored the data.
-
-If pilot test data has been collected or acquired, describe how the researchers observed and analyzed the pilot test, and the extent to which the pilot test influenced the research design.
 
 ## Bias and threats to validity
 
+
+Going into this study, I know that there is a boundary distortion along the eastern edge of the state along the Connecticut River error that compromises internal validity.  Vermont River Corridors (the shapefile) does not include a river corridor model for the Connecticut River.  I will attempt to estimate my own river corridor for the Connecticut River.
+
+Also, I know going into this study that there are issues with small numbers of mobile homes in some towns that are used as denominators in calculating percentages, and this will lead to overly sensitive and overly inflated percentages in some towns.  I do not plan to change this, as that would require calculating the area of towns and counties, which I did not have time for when completing this study.
+
 Given the research design and primary data to be collected and/or secondary data to be used, discuss common threats to validity and the approach to mitigating those threats, with an emphasis on geographic threats to validity.
 
-These include:
-  - uneven primary data collection due to geographic inaccessibility or other constraints
-  - multiple hypothesis testing
-  - edge or boundary effects
-  - the modifiable areal unit problem
-  - nonstationarity
-  - spatial dependence or autocorrelation
-  - temporal dependence or autocorrelation
-  - spatial scale dependency
-  - spatial anisotropies
-  - confusion of spatial and a-spatial causation
-  - ecological fallacy
-  - uncertainty e.g. from spatial disaggregation, anonymization, differential privacy
+Lastly, the original QGIS study utilizes and area weighted reaggration for determining a number of mobile homes at risk in the FEMA flood zones, based on ACS 2014-2018 survey data and assuming an even distribution of mobile homes across counties.  However, the GEOG 0261 course has repeatedly demonstrated that this is an inaccurate approach to the research question, and thus I will not try to reproduce this part of the study.  This is an issue of a modifiable areal unit problem.
   
-MAUP
+
 
 ## Data transformations
 
@@ -454,14 +358,14 @@ mh_fema_by_county
 
 
 # Group by county, counting the number of MHs at risk...using select by location data
-mh_fema_by_county2 <- mh_fema2 %>%
-  group_by(county) %>%
-  count(county, name = "mobile_home_count") %>%
-  st_drop_geometry()
+#mh_fema_by_county2 <- mh_fema2 %>%
+#  group_by(county) %>%
+#  count(county, name = "mobile_home_count") %>%
+#  st_drop_geometry()
 
-mh_fema_by_county2
+#mh_fema_by_county2
 
-# Both approaches seem to work!  But I get a warning for the select by location approach.  Thus, I will use the spatial join + filter data for use going forward.
+# Both approaches seem to work!  But I get a warning for the select by location approach and it takes a significant time to run.  Thus, I will use the spatial join + filter data for use going forward.
 ```
 
 
@@ -552,6 +456,7 @@ mh_flooded_by_town <- mh_flooded %>%
   group_by(town) %>%
   count(town, name = "at_risk_count")
 ```
+
 
 ## Create a table to show the 10 towns with the highest mobile home flooding risk (Table 2)
 ```{r}
@@ -679,9 +584,7 @@ Woodford and Woodstock have the first and second highest % of mobile homes at ri
 
 Ultimately, the main goal of this reproduction was to find a way using R code to do all the spatial analysis steps that are taught to GEOG 0261 students in QGIS in the "Flood Hazard Vulnerability in Vermont's Mobile Homes" assignment for the course.  I followed the exact same workflow provided by the instructors of GEOG 0261 to create Table 1.  While I technically could have done a select by location to identify the mobile homes in the flood zones and river corridors, I chose to use a join by location and then a filter because of a warning that was thrown and because it was computationally faster.
 
-
 I relied on the stars and tmap libraries to work with the spatial data.
-
 
 
 ## Addition of the estimated Connecticut River corridor: 
@@ -692,66 +595,70 @@ Based on my estimation of the river corridor for the Connecticut River, I found 
 
 # Discussion
 
-
 ## Sources of uncertainty and geographic threats to validity:
-Construct validity
-Small number problem if a town doesn't have a ton of mobile homes...for rates
-Lineage section to specify the data sources
+
+There are several threats to validity/sources of uncertainty, as proposed by Schmitt (1978), that are inherent to "Flood Hazard Vulnerability in Vermont's Mobile Homes" assignment, as well as this reproduction study of it.  Although this reproduction study partially addresses the boundary distortion problem posed by the lack of published River Corridors along the Connecticut River, this reproduction by no means fixes all the sources of uncertainty.
 
 
-### Future additions to the study:
+There are a few potential threats to construct validity that this reproduction study does not directly address.
+
+Notably, Table 2 and Map 1 do illustrate how the study runs into a small number problem when calculating the the % of mobile homes at risk in each town.  Because some towns have very few mobile homes to begin with (ex. Sandgate has 7, Pittsfield has 9), any rate or % calculation that uses number of mobile homes as its denominator is highly sensitive and distorted.  Because Sandgate has 4 mobile homes at risk and because Pittsfield has 4 mobile homes at risk, their % of mobile homes at risk is incredibly high.  Sandgate is over 50%!  This makes it seem like they have a huge problem with their mobile homes being at risk.  Sandgate has the 3rd highest at risk rate of any town, and Pittsfield has the 7th highest at risk rate of any town, despite the two of them only having 8 mobile homes at risk combined.  Meanwhile, Pownall, which has 135 mobile homes at risk out of its 359 total homes at risk (37.6%), and Brattleboro, which has 127 mobile homes at risk out of its 401 total mobile homes (31.7%) don't even crack the top 10 list, and the choropleth map makes their risk rates seem less severe.  While the study make Map 1 based on total number of mobile homes at risk, and sort Table 2 based on total number of mobile homes at risk (instead using the rate), then we would run into the opposite problem where the largest towns with the most area would have the most mobile homes at risk...basically running into the Modifiable Areal Unit Problem.  It might make more sense to divide by area of the town in future studies to normalize for size of the town, rather than dividing number of mobile homes at risk by total number of mobile homes.   It needs a better way to normalize.  Table 1 (which reports on counties, not towns) does not experience this problem as much because the number of mobile homes is over 1000 in each county, which is a large enough sample and denominator to keep any rate calculations from being distorted. These matters all highlight the importance of scale and areal unit, and are examples of partition distortions and scale distortions affecting internal validity of the study 
+
+While Table 1 is more resilient to distortions than Table 2, a concern that I discovered with Table 1 is that it uses ACS estimates to determine total number of mobile homes in each county, rather than spatially seeing which e911 mobile home points fall within each county and counting those. This is a problem or question of measurement and spatial heterogeneity, as the ACS surveys might not adequately represent or weight the population living in mobile homes in Vermont. There big differences between living in a mobile home park and an independent mobile home, and I have a feeling that the ACS surveys do not always take these distinctions into account in their surveys.
+
+Another threat to validity of the original analysis was the boundary distortion caused along the Connecticut River for creating River Corridors. According to Flood Ready Vermont,
+
+"During the initial development of the river corridor base map, the DEC recognized the Connecticut River flows in a unique geologic and geographic setting and is influenced by numerous impoundments. In order to create an appropriate River Corridor for the Vermont side of the Connecticut, the Rivers Program will conduct a separate analysis in 2019 to review the influence of features such as escarpments and impoundments that affect fluvial processes, valley bottom lands, floodplains, river planform, and corridor widths. For Vermont projects being reviewed while this River Corridor is being developed DEC will make site specific river corridor and floodway determinations in accordance with the Flood Hazard Area & River Corridor Protection Procedure. When the Connecticut River Corridor is developed it will be available for a public review and comment similar to the release of the Statewide River Corridor Base Map." [LINK](https://floodready.vermont.gov/RCFAQ#15)
+
+I believe that the Connecticut River also may not have been included because the border between VT and NH actually lies along the VT shoreline of the river, and not at the centerline.  Hence, the Connecticut River is technically entirely outside of the state of Vermont.
+
+However, there does not seem to be any evidence that the Connecticut River was ever included in 2019, upon searching in the VT Open GeoData Portal.  As I discussed earlier in the report, I crudely estimated what river corridor for the Connecticut River might look like, and identified mobile homes that fell within this estimated corridor.  This identification of mobile homes that would not have been identified by the River Corridor approach using published River Corridor data helps address the threat to internal validity caused by the boundary distortion on the eastern edge of the state where no River Corridors are defined for the Connecticut River.  Additionally, since FEMA flood zones do contain most of the mobile homes along the Connecticut River, there is still some level of acknowledgement that these mobile homes are at risk to flooding.  If the FEMA Flood Zones were similarly absent along the Connecticut River, this would be a different story.
+
+For this study, I relied on the data that is provided by the instructors to the students of GEOG 0261, which is preprocessed by the instructors.  The formal student instructions for the "Flood Hazard Vulnerability in Vermont's Mobile Homes" mention that the data is all downloaded from either the VT Open GeoData Portal or from the US Census/American Community Survey website, both of which are freely accessible to a public audience. I used this data because that is what the students receive in class, and I wanted to see if it was possible for a student to reproduce the analysis in the R coding environment.  However, I found that the "towns.shp" file from when I was a student in GEOG 0261 (formerly GEOG 0120) was corrupted, and thus I re-downloaded the file from the ACS. However, the file that I downloaded did not distinguish between Rutland Town and Rutland City, as the pre-processed data did.
+
+Using the pre-processed data provided by the instructors certainly makes this work less reproducible and introduces potential sources of uncertainty if one was to download the data from the source themselves and process the data themselves.  It is challenging to offer more insight into this not knowing the exact files that the instructors downloaded, when they downloaded them, and what pre-processing steps they took.
+
+I have provided in the `data/raw/public` folder unprocessed data layers that I downloaded from the VT Open GeoData Portal and ACS that I believe where what the instructors used.  Users of this reproduction study and its repository can investigate these data sources, but I am not completely confident that all the right data layers are there.  Use caution and use these files at your own risk.
+
+
+The methodology of this study, which is largely adopted from that of Baker et al. (2014), seems to have strong external validity given the assumption that you have point locations for mobile homes (or other structures, if that is what you are investigating the flood risk of).  However, since not every county in the US uses E911 (as of 2014 when the Baker et al. paper was published), this methodology might not be reproducible in those counties without point data on mobile homes.  As the GEOG 0261 instructors found, using an area-weighted aggregation approach is certainly possibly for identifying mobile homes in flood hazard areas, but this would assume an even distribution of mobile homes within a county and is thus less accurate.
+
+Because this methodology does not perform much statistical analysis, model building, or perform any statistical tests, there are not many threats to statistical or internal validity. The methodology is very straightforward, and relies mostly on simple spatial analysis techniques such as buffering, joining by location, and selecting by location.
+
+
+
+## Future additions to the study:
 Future additions of the study could work to improve on the sources of uncertainty and threats to validity.  Notably, a future study could count the number of mobile home points (from e911 data) in each county to use as the first column in Table 1 (and thus to use as a denominator in the rate columns).  Currently, the table relies on ACS estimates of mobile homes to provide values for the mobile_home_count variable.  However, the ACS survey is just a well-informed estimate, whereas e911 points are known locations of mobile homes.  
 
-Additionally, since it is unknown when the GEOG 0261 data was actually constructed, someone could do reproduce this study with all new downloaded data, especially using newer ACS data.
+If Flood Ready Vermont ever does create a river corridor for the Connecticut River, that would warrant further another reproduction attempt. Or, someone with strong geologic knowledge could try to better estimate a river corridor for the Connecticut River and use that.  See the `docs/presentation` folder for two reports from the Vermont Agency of Natural Resources on how River Corridors are constructed.  Or, view them online [HERE](https://dec.vermont.gov/sites/dec/files/documents/DEC_FHARCP_Procedure.pdf) and [HERE](https://dec.vermont.gov/sites/dec/files/wsm/rivers/docs/rv_rivercorridorguide.pdf).
+
+Additionally, since it is unknown when the GEOG 0261 data was actually constructed, someone could do reproduce this study with all new downloaded data, especially using newer ACS data (newer than 2014-2018).
 
 
 ## Pedagogical implications: 
 
+Using R to teach this analysis certainly has its advantages over QGIS.  Because all of the R code is documented in a single file, all of the code can easily be run altogether and re-run as many times as necessary.  This makes it especially to teach how reproduction studies work.  Meanwhile, although QGIS is open source and easily acessible to students, QGIS involves clicking lots of buttons based on following a workflow, with lots of room to go wrong by clicking the wrong buttons, missing a step, etc.  It is challenging to see where you went wrong in QGIS, and it is easier to make mistakes.  Using R for basic spatial analysis like in this study is very straightforward, allows for various sections of the analysis to be run all at once, and to easily record/track how you created the maps, data frames, variables, and tables that you did.  Performing this analysis in R yielded the same results (except for the Rutland issue...but that's because I used a different towns layer) as QGIS, meaning that it is completely valid to teach students this study using R.  It would not impact their results.  This reproduction of the GEOG 0261 study provides strong evidence in support of teaching intro geography students spatial R.  There is room for both tools in teaching GIS.
+
 
 ## Policy implications: 
+
+Both the original study and this reproduction study demonstrate how across Vermont, mobile homes tend to be at a high risk of flooding.  Given that residents of mobile homes tend to be of lower income and marginalized communities, this warrants targeted policy efforts (especially in the towns and counties that this study shows to be higher risk) to mitigate their vulnerability to flooding.
 
 
 ### Connecticut River:
 
-
-
+As I have implied already, given that many mobile homes along the Connecticut River would not be identified as at risk to flooding when using the published River Corridor approach, policymakers should ensure that these homes are not left out of any flood program, flood insurance, or other policy efforts designed to mitigate flood risk for vulnerable communities since they appear to be at an increased risk of being overlooked.  However, fortunately FEMA does acknowledge most of these CT River mobile homes in their 100 year flood zones.
 
 
 # Conclusion
 
+I successfully reproduced the "Flood Hazard Vulnerability in Vermont's Mobile Homes" assignment from Middlebury College's GEOG 0261 course (which is taught using QGIS) using an code-based approach in R.  I found that the core spatial analysis concepts used are analogous between programs and that using R can be advantageous for minimizing mistakes in the analysis (and for more streamline, organized, and clear workflows).
 
+Additionally, I find that the original assignment/analysis, which is modeled off of the methodology employed by Baker et al. (2014), utilized a Vermont River Corridor layer that does not exist along the eastern boundary of the state - the Connecticut River.  Thus, a not-insignificant number of mobile homes in Windsor and Windham counties are not identified as at risk of flooding when using the Vermont River Corridor approach to determining flood vulnerability.
 
+The original study, as well as this reproduction, indicate the high levels of vulnerability to flooding that mobile homes in Vermont face. This is especially relevant given the catastrophic flooding that Vermont experienced during the Summer of 2023, and warrants policy actions to protect those that are most vulnerable.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Analysis
-
-Describe the methods of analysis that will directly test the hypotheses or provide results to answer the research questions.
-This section should explicitly define any spatial / statistical *models* and their *parameters*, including *grouping* criteria, *weighting* criteria, and *significance thresholds*.
-Also explain any follow-up analyses or validations.
+Lastly, as the capstone project to my GEOG 0361, this reproduction has been produced in a way such that it is intended to be reproducible and accessible.  Open Science is the future of all science.  I hope that future authors, and even instructors of the GEOG 0261 course, can take advantage of the code and data that I will make publicly accessible as part of this reproduction.
 
 
 
