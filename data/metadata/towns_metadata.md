@@ -5,7 +5,7 @@
 - `Spatial Reference System`: EPSG 32145 - NAD 83 Vermont
 - `Temporal Coverage`: 2014-2018 ACS estimates
 - `Temporal Resolution`: N/A
-- `Lineage`: Downloaded from the US Census American Community Survey by GEOG 0261 instructors, and cleaned to only include the towns in the 4 southernmost counties.
+- `Lineage`: Downloaded from the US Census American Community Survey by GEOG 0261 instructors, and cleaned to only include the towns in the 4 southernmost counties. ***I use the direct download from the ACS due to a file corruption issue with the file received from the instructors***
 - `Distribution`: The raw data is publicly available from the US Census/ACS
 - `Constraints`: N/A
 - `Data Quality`: Assumed to be complete (so far as the ACS estimates are complete) for the 4 southern VT counties
