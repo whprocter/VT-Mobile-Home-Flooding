@@ -10,13 +10,6 @@ knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_dir = "../../docs/report") })
 ---
 
-
-```{r, results='asis'}
-writeLines("td, th { padding : 6px } th { background-color : brown ; color : white; border : 1px solid white; } td { color : brown ; border : 1px solid brown }", con = "mystyle.css")
-dset1 <- head(ToothGrowth)
-knitr::kable(dset1, format = "html")
-```
-
 # Abstract
 
 Middlebury College's Human Geography with GIS course (GEOG 0261) regularly conducts an analysis on "Flood Hazard Vulnerability in Vermont's Mobile Homes" using QGIS; the GEOG 0261 analysis builds on Baker et al.'s 2011 study on *Rapid Flood Exposure Assessment of Vermont Mobile Home Parks Following Tropical Storm Irene* (see bottom of this report for formal citation).
